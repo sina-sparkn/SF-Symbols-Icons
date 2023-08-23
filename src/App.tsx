@@ -91,7 +91,12 @@ function App() {
               for (let i = 0; i < query.length; i++) {
                 const char = query.charAt(i);
 
-                if (item.svgName[0].includes(char)) {
+                if (
+                  item.svgName[0]
+                    .split("-")
+                    .map((e) => e[0])
+                    .includes(char)
+                ) {
                   return true;
                 }
               }
