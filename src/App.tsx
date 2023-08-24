@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import "./App.css";
 
 type Data = {
   id: number;
@@ -8,18 +9,19 @@ type Data = {
 };
 
 function App() {
-  const [showFilled, setShowFilled] = useState(false);
-  const [showOutline, setShowOutline] = useState(false);
-  // const [searchQuery, setSearchQuery] = useState("");
+  const [selectedOption, setSelectedOption] = useState<
+    "All" | "Outline" | "Filled"
+  >("All");
+  const [searchQuery, setSearchQuery] = useState("");
   const [data, setData] = useState<Data[]>();
   const [searchedData, setSearchedData] = useState<Data[]>();
+  const [category, setCategory] = useState("communication");
 
   useEffect(() => {
+    setSearchQuery("");
     async function getData() {
       await axios
-        .get(
-          "https://lktiktfqfsppoevfxkla.supabase.co/storage/v1/object/sign/sf-symbols/communication.json?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJzZi1zeW1ib2xzL2NvbW11bmljYXRpb24uanNvbiIsImlhdCI6MTY5MjgxOTM4MCwiZXhwIjoxNzI0MzU1MzgwfQ.b8Uh4cX2SCexbgxChxW5gCi-ABgwM73SiZoJ-O7HCKQ&t=2023-08-23T19%3A36%3A20.392Z"
-        )
+        .get(`/jsons/${category}.json`)
         .then((res) => {
           setData(res.data);
           setSearchedData(res.data);
@@ -30,7 +32,7 @@ function App() {
     }
 
     getData();
-  }, []);
+  }, [category]);
 
   function renderSvgCode(svgCode: string | null) {
     if (svgCode === null) {
@@ -54,6 +56,33 @@ function App() {
         SF-Symbols
       </h1>
 
+      <section className="flex flex-col px-5 mb-5 gap-3">
+        <h2 className="uppercase text-xs text-zinc-500">Categories</h2>
+        <div className="flex gap-3">
+          <label className="flex gap-1.5">
+            <input
+              type="radio"
+              value="communication"
+              checked={category === "communication"}
+              onChange={(e) => {
+                setCategory(e.target.value);
+              }}
+            />
+            Communication
+          </label>
+          <label className="flex gap-1.5">
+            <input
+              type="radio"
+              value="weather"
+              checked={category === "weather"}
+              onChange={(e) => {
+                setCategory(e.target.value);
+              }}
+            />
+            Weather
+          </label>
+        </div>
+      </section>
       <section className="w-full p-5 sticky top-0 flex items-center text-zinc-600 mb-3 shadow bg-white md:px-40 lg:px-40">
         <div className="min-w-5 min-h-5">
           <svg
@@ -86,19 +115,24 @@ function App() {
 
         <input
           onChange={(e) => {
+            setSearchQuery(e.target.value);
             const query = e.target.value.toLowerCase();
             const filteredData = data?.filter((item) => {
+              if (item.svgName[0].includes(query)) return true;
+
               for (let i = 0; i < query.length; i++) {
                 const char = query.charAt(i);
 
-                if (
-                  item.svgName[0]
-                    .split("-")
-                    .map((e) => e[0])
-                    .includes(char)
-                ) {
-                  return true;
-                }
+                // if (item.svgName[0].includes(char)) return true;
+
+                // if (
+                //   item.svgName[0]
+                //     .split("-")
+                //     .map((e) => e[0])
+                //     .includes(char)
+                // ) {
+                //   return true;
+                // }
               }
             });
 
@@ -123,40 +157,70 @@ function App() {
           placeholder="Search all icons ..."
           type="text"
           name="search"
-          // value={searchQuery}
+          value={searchQuery}
         />
 
-        <div className="flex gap-3 scale-75 origin-right">
-          <button
-            onClick={() => {
-              setShowOutline(!showOutline);
-            }}
-            disabled={showFilled}
-            className={`border ${
-              showOutline ? "bg-zinc-300" : ""
-            } border-black/50 rounded-lg p-1.5 px-5 duration-200`}
-          >
+        <div className="flex gap-3 origin-right">
+          <label className="flex gap-2">
+            <input
+              type="radio"
+              value="All"
+              checked={selectedOption === "All"}
+              onChange={() => {
+                setSelectedOption("All");
+
+                setSearchedData(data);
+              }}
+            />
+            All
+          </label>
+          <label className="flex gap-2">
+            <input
+              type="radio"
+              value="Outline"
+              checked={selectedOption === "Outline"}
+              onChange={() => {
+                setSelectedOption("Outline");
+
+                const filteredData = data?.filter(
+                  (item) => !item.svgName[0].includes("fill")
+                );
+
+                setSearchedData(filteredData);
+              }}
+            />
             Outline
-          </button>
-          <button
-            onClick={() => {
-              setShowFilled(!showFilled);
-            }}
-            disabled={showOutline}
-            className={`border ${
-              showFilled ? "bg-zinc-300" : ""
-            } border-black/50 rounded-lg p-1.5 px-5 duration-200`}
-          >
+          </label>
+          <label className="flex gap-2">
+            <input
+              type="radio"
+              value="Filled"
+              checked={selectedOption === "Filled"}
+              onChange={() => {
+                setSelectedOption("Filled");
+
+                const filteredData = data?.filter((item) =>
+                  item.svgName[0].includes("fill")
+                );
+
+                setSearchedData(filteredData);
+              }}
+            />
             Filled
-          </button>
+          </label>
         </div>
       </section>
-
       <section className="mx-5 md:mx-40 my-10">
         <section className="grid grid-cols-3 w-full md:grid-cols-4 lg:grid-cols-6 xl:lg:grid-cols-7 justify-items-center content-center place-items-center place-content-center gap-y-7 ">
+          {searchedData?.length === 0 && (
+            <div className="w-full text-zinc-500 m-auto flex items-center justify-center mt-40 absolute">
+              No SF-Symbols for "{searchQuery}"
+            </div>
+          )}
+
           {searchedData?.map((file, index) => (
             <div
-              className="flex flex-col gap-1 lg:gap-2 w-24 md:w-24 lg:w-32 h-auto xl:w-36"
+              className="svgContainer flex flex-col gap-1 lg:gap-2 w-24 md:w-24 lg:w-32 h-auto xl:w-36"
               key={index}
             >
               <div
@@ -165,19 +229,9 @@ function App() {
                 }}
                 className="border hover:border-black/40 duration-200 rounded-xl cursor-pointer w-24 h-24 md:h-24 md:w-24 lg:w-32 lg:h-32 xl:w-36 xl:h-36 flex items-center justify-center"
               >
-                <div className="w-fit">
-                  {showFilled
-                    ? file.svgName[0].includes("fill")
-                      ? renderSvgCode(file.svgCode)
-                      : null
-                    : showOutline
-                    ? !file.svgName[0].includes("fill")
-                      ? renderSvgCode(file.svgCode)
-                      : null
-                    : renderSvgCode(file.svgCode)}
-                </div>
+                <div className="w-fit">{renderSvgCode(file.svgCode)}</div>
               </div>
-              <p className="text-sm text-zinc-400 font-medium truncate text-center">
+              <p className="text-sm h-10 text-zinc-400 font-medium truncate text-center">
                 {file.svgName}
               </p>
             </div>
