@@ -19,6 +19,7 @@ function App() {
 
   useEffect(() => {
     setSearchQuery("");
+    setSelectedOption("All");
     async function getData() {
       await axios
         .get(`/jsons/${category}.json`)
@@ -88,16 +89,18 @@ function App() {
 
       <section className="flex flex-col mb-3 gap-3 mx-5 md:mx-40">
         <h2 className="uppercase text-xs text-zinc-500">Categories</h2>
-        <div className="flex items-center gap-3 pb-4 overflow-x-scroll">
+        <div className="grid grid-flow-col items-center gap-3 w-full pb-4 overflow-x-scroll">
           {Categories.map((item) => (
             <button
               key={item}
               onClick={() => {
                 setCategory(item);
               }}
-              className="border px-5 py-2 rounded-lg"
+              className={`border border-zinc-200 px-5 py-2.5 rounded-lg w-max ${
+                category === item ? "bg-zinc-200" : ""
+              }`}
             >
-              {item}
+              <span className="capitalize">{item}</span>
             </button>
           ))}
         </div>
@@ -212,7 +215,11 @@ function App() {
           <button
             onClick={() => {
               setSelectedOption("Filled");
-              setSearchedData(data);
+              const filteredData = data?.filter((item) =>
+                item.svgName[0].includes("fill")
+              );
+
+              setSearchedData(filteredData);
             }}
             className={`border w-full lg:px-7 rounded-r-md py-1 ${
               selectedOption === "Filled" ? "bg-zinc-200" : ""
