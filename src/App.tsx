@@ -120,20 +120,20 @@ function App() {
             const filteredData = data?.filter((item) => {
               if (item.svgName[0].includes(query)) return true;
 
-              for (let i = 0; i < query.length; i++) {
-                const char = query.charAt(i);
+              // for (let i = 0; i < query.length; i++) {
+              //   const char = query.charAt(i);
 
-                // if (item.svgName[0].includes(char)) return true;
+              //   if (item.svgName[0].includes(char)) return true;
 
-                // if (
-                //   item.svgName[0]
-                //     .split("-")
-                //     .map((e) => e[0])
-                //     .includes(char)
-                // ) {
-                //   return true;
-                // }
-              }
+              //   if (
+              //     item.svgName[0]
+              //       .split("-")
+              //       .map((e) => e[0])
+              //       .includes(char)
+              //   ) {
+              //     return true;
+              //   }
+              // }
             });
 
             console.log(e.target.value);
