@@ -56,7 +56,7 @@ function App() {
         SF-Symbols
       </h1>
 
-      <section className="flex flex-col px-5 mb-5 gap-3">
+      <section className="flex flex-col mb-5 gap-3 mx-5 md:mx-40">
         <h2 className="uppercase text-xs text-zinc-500">Categories</h2>
         <div className="flex gap-3">
           <label className="flex gap-1.5">
@@ -83,6 +83,7 @@ function App() {
           </label>
         </div>
       </section>
+
       <section className="w-full p-5 sticky top-0 flex items-center text-zinc-600 mb-3 shadow bg-white md:px-40 lg:px-40">
         <div className="min-w-5 min-h-5">
           <svg
