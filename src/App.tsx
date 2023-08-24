@@ -50,119 +50,177 @@ function App() {
     }
   }
 
+  const Categories = [
+    "communication",
+    "weather",
+    "maps",
+    "objects & tools",
+    "devices",
+    "camera & photos",
+    "gaming",
+    "connectivity",
+    "Transportation",
+    "automation",
+    "accessibility",
+    "privacy & security",
+    "human",
+    "home",
+    "fitness",
+    "nature",
+    "editing",
+    "text formatting",
+    "media",
+    "keyboard",
+    "commerce",
+    "time",
+    "health",
+    "shapes",
+    "arrows",
+    "indices",
+    "math",
+  ];
+
   return (
     <div className="antialiased font-medium">
       <h1 className="text-3xl mb-10 font-bold mx-5 md:mx-40 my-10">
         SF-Symbols
       </h1>
 
-      <section className="flex flex-col mb-5 gap-3 mx-5 md:mx-40">
+      <section className="flex flex-col mb-3 gap-3 mx-5 md:mx-40">
         <h2 className="uppercase text-xs text-zinc-500">Categories</h2>
-        <div className="flex gap-3">
-          <label className="flex gap-1.5">
-            <input
-              type="radio"
-              value="communication"
-              checked={category === "communication"}
-              onChange={(e) => {
-                setCategory(e.target.value);
+        <div className="flex items-center gap-3 pb-4 overflow-x-scroll">
+          {Categories.map((item) => (
+            <button
+              key={item}
+              onClick={() => {
+                setCategory(item);
               }}
-            />
-            Communication
-          </label>
-          <label className="flex gap-1.5">
-            <input
-              type="radio"
-              value="weather"
-              checked={category === "weather"}
-              onChange={(e) => {
-                setCategory(e.target.value);
-              }}
-            />
-            Weather
-          </label>
+              className="border px-5 py-2 rounded-lg"
+            >
+              {item}
+            </button>
+          ))}
         </div>
       </section>
 
-      <section className="w-full p-5 sticky top-0 flex items-center text-zinc-600 mb-3 shadow bg-white md:px-40 lg:px-40">
-        <div className="min-w-5 min-h-5">
-          <svg
-            width="28"
-            height="28"
-            viewBox="0 0 28 28"
-            fill="none"
-            className="w-full h-full"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <g clipPath="url(#clip0_2124_88631)">
-              <path
-                d="M3 11.3516C3 16.5078 7.19531 20.7031 12.3516 20.7031C14.3906 20.7031 16.2539 20.0469 17.7891 18.9453L23.5547 24.7227C23.8242 24.9922 24.1758 25.1211 24.5508 25.1211C25.3477 25.1211 25.8984 24.5234 25.8984 23.7383C25.8984 23.3633 25.7578 23.0234 25.5117 22.7773L19.7812 17.0117C20.9883 15.4414 21.7031 13.4844 21.7031 11.3516C21.7031 6.19531 17.5078 2 12.3516 2C7.19531 2 3 6.19531 3 11.3516ZM5.00391 11.3516C5.00391 7.29688 8.29688 4.00391 12.3516 4.00391C16.4062 4.00391 19.6992 7.29688 19.6992 11.3516C19.6992 15.4062 16.4062 18.6992 12.3516 18.6992C8.29688 18.6992 5.00391 15.4062 5.00391 11.3516Z"
-                fill="gray"
-                fillOpacity="1"
-              />
-            </g>
-            <defs>
-              <clipPath id="clip0_2124_88631">
-                <rect
-                  width="22.8984"
-                  height="23.1211"
-                  fill="white"
-                  transform="translate(3 2)"
+      <section className="w-full p-5 sticky top-0 flex flex-col lg:flex-row text-zinc-600 mb-3 shadow bg-white md:px-40 lg:px-40">
+        <div className="flex items-center w-full">
+          <div className="w-5 h-5">
+            <svg
+              width="28"
+              height="28"
+              viewBox="0 0 28 28"
+              fill="none"
+              className="w-full h-full"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <g clipPath="url(#clip0_2124_88631)">
+                <path
+                  d="M3 11.3516C3 16.5078 7.19531 20.7031 12.3516 20.7031C14.3906 20.7031 16.2539 20.0469 17.7891 18.9453L23.5547 24.7227C23.8242 24.9922 24.1758 25.1211 24.5508 25.1211C25.3477 25.1211 25.8984 24.5234 25.8984 23.7383C25.8984 23.3633 25.7578 23.0234 25.5117 22.7773L19.7812 17.0117C20.9883 15.4414 21.7031 13.4844 21.7031 11.3516C21.7031 6.19531 17.5078 2 12.3516 2C7.19531 2 3 6.19531 3 11.3516ZM5.00391 11.3516C5.00391 7.29688 8.29688 4.00391 12.3516 4.00391C16.4062 4.00391 19.6992 7.29688 19.6992 11.3516C19.6992 15.4062 16.4062 18.6992 12.3516 18.6992C8.29688 18.6992 5.00391 15.4062 5.00391 11.3516Z"
+                  fill="gray"
+                  fillOpacity="1"
                 />
-              </clipPath>
-            </defs>
-          </svg>
+              </g>
+              <defs>
+                <clipPath id="clip0_2124_88631">
+                  <rect
+                    width="22.8984"
+                    height="23.1211"
+                    fill="white"
+                    transform="translate(3 2)"
+                  />
+                </clipPath>
+              </defs>
+            </svg>
+          </div>
+
+          <input
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              const query = e.target.value.toLowerCase();
+              const filteredData = data?.filter((item) => {
+                if (item.svgName[0].includes(query)) return true;
+
+                // for (let i = 0; i < query.length; i++) {
+                //   const char = query.charAt(i);
+
+                //   if (item.svgName[0].includes(char)) return true;
+
+                //   if (
+                //     item.svgName[0]
+                //       .split("-")
+                //       .map((e) => e[0])
+                //       .includes(char)
+                //   ) {
+                //     return true;
+                //   }
+                // }
+              });
+
+              console.log(e.target.value);
+              console.log(filteredData);
+
+              // if (filteredData?.length === 0) {
+              //   const nonFilteredData = data?.filter((item) =>
+              //     item.svgName[0].includes("")
+              //   );
+
+              //   setData(nonFilteredData);
+              // }
+
+              if (query === "") {
+                setSearchedData(data);
+              } else {
+                setSearchedData(filteredData);
+              }
+            }}
+            className="w-full p-3 outline-transparent"
+            placeholder="Search all icons ..."
+            type="text"
+            name="search"
+            value={searchQuery}
+          />
         </div>
 
-        <input
-          onChange={(e) => {
-            setSearchQuery(e.target.value);
-            const query = e.target.value.toLowerCase();
-            const filteredData = data?.filter((item) => {
-              if (item.svgName[0].includes(query)) return true;
-
-              // for (let i = 0; i < query.length; i++) {
-              //   const char = query.charAt(i);
-
-              //   if (item.svgName[0].includes(char)) return true;
-
-              //   if (
-              //     item.svgName[0]
-              //       .split("-")
-              //       .map((e) => e[0])
-              //       .includes(char)
-              //   ) {
-              //     return true;
-              //   }
-              // }
-            });
-
-            console.log(e.target.value);
-            console.log(filteredData);
-
-            // if (filteredData?.length === 0) {
-            //   const nonFilteredData = data?.filter((item) =>
-            //     item.svgName[0].includes("")
-            //   );
-
-            //   setData(nonFilteredData);
-            // }
-
-            if (query === "") {
+        <div className="flex text-black mt-2">
+          <button
+            onClick={() => {
+              setSelectedOption("All");
               setSearchedData(data);
-            } else {
-              setSearchedData(filteredData);
-            }
-          }}
-          className="w-full p-3 outline-transparent"
-          placeholder="Search all icons ..."
-          type="text"
-          name="search"
-          value={searchQuery}
-        />
+            }}
+            className={`border w-full lg:px-7 rounded-l-md py-1 ${
+              selectedOption === "All" ? "bg-zinc-200" : ""
+            }`}
+          >
+            All
+          </button>
+          <button
+            onClick={() => {
+              setSelectedOption("Outline");
+              const filteredData = data?.filter(
+                (item) => !item.svgName[0].includes("fill")
+              );
 
-        <div className="flex gap-3 origin-right">
-          <label className="flex gap-2">
+              setSearchedData(filteredData);
+            }}
+            className={`border w-full lg:px-7 py-1 ${
+              selectedOption === "Outline" ? "bg-zinc-200" : ""
+            }`}
+          >
+            Outline
+          </button>
+          <button
+            onClick={() => {
+              setSelectedOption("Filled");
+              setSearchedData(data);
+            }}
+            className={`border w-full lg:px-7 rounded-r-md py-1 ${
+              selectedOption === "Filled" ? "bg-zinc-200" : ""
+            }`}
+          >
+            Filled
+          </button>
+          {/* <label className="flex gap-2">
             <input
               type="radio"
               value="All"
@@ -208,7 +266,7 @@ function App() {
               }}
             />
             Filled
-          </label>
+          </label> */}
         </div>
       </section>
       <section className="mx-5 md:mx-40 my-10">

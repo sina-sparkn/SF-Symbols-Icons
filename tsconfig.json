@@ -1,4 +1,9 @@
 {
+  "baseUrl": ".",
+  "paths": {
+    "@/*": ["./src/*"]
+  },
+
   "compilerOptions": {
     "target": "ES2020",
     "useDefineForClassFields": true,
