@@ -10,3 +10,8 @@
 * {
   font-family: satoshi-var, Helvetica, sans-serif;
 }
+
+html,
+body {
+  scroll-behavior: smooth;
+}
