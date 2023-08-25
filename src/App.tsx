@@ -17,7 +17,7 @@ function App() {
   const [data, setData] = useState<Data[]>();
   const [searchedData, setSearchedData] = useState<Data[]>();
   const [filteredData, setFilteredData] = useState<Data[]>();
-  const [category, setCategory] = useState("communication");
+  const [category, setCategory] = useState("arrows");
   const [copied, setCopied] = useState<{ isCopied: boolean; name: string }>({
     isCopied: false,
     name: "",
@@ -71,10 +71,16 @@ function App() {
   }
 
   const Categories = [
+    "arrows",
     "communication",
+    "privacy & security",
     "weather",
     "maps",
+    "time",
+    "health",
+    "shapes",
     "objects & tools",
+    "human",
     "devices",
     "camera & photos",
     "gaming",
@@ -82,22 +88,16 @@ function App() {
     "transportation",
     "automation",
     "accessibility",
-    "privacy & security",
-    "human",
     "home",
     "fitness",
     "nature",
     "editing",
-    "text formatting",
     "media",
     "keyboard",
     "commerce",
-    "time",
-    "health",
-    "shapes",
-    "arrows",
     "indices",
     "math",
+    "text formatting",
   ];
 
   const { scrollY } = useScroll();
