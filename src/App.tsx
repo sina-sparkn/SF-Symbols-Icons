@@ -1,4 +1,4 @@
-import { useState, useEffect, Suspense } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import "./App.css";
 import { motion, useScroll, useTransform } from "framer-motion";
@@ -21,8 +21,10 @@ function App() {
     isCopied: false,
     name: "",
   });
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    setLoading(true);
     async function getData() {
       await axios
         .get(`/jsons/${category}.json`)
@@ -31,9 +33,11 @@ function App() {
           setSearchedData(res.data);
           setSearchQuery("");
           setSelectedOption("All");
+          setLoading(false);
         })
         .catch((error) => {
           console.error(error);
+          setLoading(false);
         });
     }
 
@@ -103,7 +107,7 @@ function App() {
         alt="dashed SF-Symbols logo as the background image"
       />
       <div className="bg-gradient-to-t from-emerald-100 via-emerald-100 to-white">
-        <header className="flex items-center relative justify-between mx-5 md:mx-40 my-10">
+        <header className="flex items-center relative justify-between mx-5 md:mx-20 lg:mx-40 my-10">
           <div className="flex items-center gap-3">
             <img
               src="/images/SF-Symbols.png"
@@ -130,7 +134,7 @@ function App() {
           </a>
         </header>
 
-        <div className="mb-36 mx-5 md:mx-40 flex flex-wrap gap-1.5 text-zinc-600 text-sm relative">
+        <div className="mb-36 mx-5 md:mx-20 lg:mx-40 flex flex-wrap gap-1.5 text-zinc-600 text-sm relative">
           <p>5000+ Symbols</p> •
           <div>
             <a
@@ -158,7 +162,7 @@ function App() {
           • <p>React Compatible</p>
         </div>
 
-        <section className="flex flex-col gap-3 mx-5 md:mx-40 relative">
+        <section className="flex flex-col gap-3 mx-5 md:mx-20 lg:mx-40 relative">
           <div className="flex items-start gap-1">
             <h2 className="uppercase text-xs text-black/70">Categories</h2>
             <svg
@@ -201,7 +205,7 @@ function App() {
       </div>
 
       <section className="searchF z-50 w-full sticky h-full -top-1">
-        <section className="w-full h-full p-5 flex flex-col lg:flex-row lg:items-center text-zinc-600 mb-3 shadow bg-white md:px-40">
+        <section className="w-full h-full p-5 flex flex-col lg:flex-row lg:items-center text-zinc-600 mb-3 shadow bg-white md:px-20 lg:px-40">
           <div className="flex items-center w-full">
             <div className="w-5 h-5">
               <svg
@@ -328,42 +332,45 @@ function App() {
         </section>
       </section>
 
-      <section className="mx-5 md:mx-40 mt-7 mb-10">
-        <section className="grid grid-cols-2 w-full md:grid-cols-4 lg:grid-cols-6 xl:lg:grid-cols-7 justify-items-center content-center place-items-center place-content-center gap-y-7 ">
+      <section className="mx-5 md:mx-20 lg:mx-40 mt-7 mb-10">
+        <section className="grid grid-cols-2 sm:grid-cols-3 w-full md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 justify-items-center content-center place-items-center place-content-center gap-y-7 ">
           {searchedData?.length === 0 && (
             <div className="w-full text-zinc-500 m-auto flex items-center justify-center mt-40 absolute">
               No SF-Symbols for "{searchQuery}"
             </div>
           )}
 
-          <Suspense fallback={<div>loading ...</div>}>
-            {searchedData?.map((file, index) => (
-              <div
-                className="Container flex flex-col gap-1 lg:gap-2 w-36 xl:w-36 h-auto"
-                key={index}
-              >
-                <div className="svgContainer border relative overflow-hidden duration-200 rounded-xl w-36 h-36 xl:w-36 xl:h-36 flex items-center justify-center">
-                  {/* <div className="cover bg-transparent w-full h-full absolute z-10"></div> */}
-                  <button
-                    onClick={() => {
-                      copyTextToClipboard(file.svgCode, file.svgName[0]);
-                    }}
-                    className="CopyButton absolute w-full h-1/2 bottom-0 flex items-center justify-center p-1"
-                  >
-                    <p className=" text-sm font-bold text-zinc-500  bg-zinc-200/30 hover:bg-emerald-400/40 hover:text-zinc-800 w-full h-full rounded-lg flex items-center justify-center">
-                      {copied.isCopied && copied.name === file.svgName[0]
-                        ? "Copied!"
-                        : "Copy JSX"}
-                    </p>
-                  </button>
-                  <div className="w-fit">{renderSvgCode(file.svgCode)}</div>
-                </div>
-                <p className="text-sm h-10 text-zinc-400 font-medium truncate text-center">
-                  {file.svgName}
-                </p>
-              </div>
-            ))}
-          </Suspense>
+          {searchedData?.map((file, index) => (
+            <div
+              className="Container flex flex-col gap-1 lg:gap-2 w-36 xl:w-36 h-auto"
+              key={index}
+            >
+              {!loading ? (
+                <>
+                  <div className="svgContainer border relative overflow-hidden duration-200 rounded-xl w-36 h-36 xl:w-36 xl:h-36 flex items-center justify-center">
+                    <button
+                      onClick={() => {
+                        copyTextToClipboard(file.svgCode, file.svgName[0]);
+                      }}
+                      className="CopyButton absolute w-full h-1/2 bottom-0 flex items-center justify-center p-1"
+                    >
+                      <p className=" text-sm font-bold text-zinc-500  bg-zinc-200/30 hover:bg-emerald-400/40 hover:text-zinc-800 w-full h-full rounded-lg flex items-center justify-center">
+                        {copied.isCopied && copied.name === file.svgName[0]
+                          ? "Copied!"
+                          : "Copy JSX"}
+                      </p>
+                    </button>
+                    <div className="w-fit">{renderSvgCode(file.svgCode)}</div>
+                  </div>
+                  <p className="text-sm h-10 text-zinc-400 font-medium truncate text-center">
+                    {file.svgName}
+                  </p>
+                </>
+              ) : (
+                <div className="svgContainer bg-slate-200 relative overflow-hidden duration-200 rounded-xl w-36 h-36 xl:w-36 xl:h-36 flex items-center justify-center"></div>
+              )}
+            </div>
+          ))}
         </section>
       </section>
       <hr />
