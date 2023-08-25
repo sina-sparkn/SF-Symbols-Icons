@@ -152,14 +152,17 @@ function App() {
 
       <section className="bg-gradient-to-t from-teal-100 to-white">
         <header className="flex items-center relative justify-between mx-5 md:mx-20 lg:mx-40 my-10">
-          <div className="flex items-center gap-3">
+          <a
+            href="https://sf-symbols.vercel.app"
+            className="flex items-center gap-3"
+          >
             <img
               src="/images/SF-Symbols.png"
               alt="SF-Symbols Logo"
               className="w-9 h-9 md:h-10 md:w-10 lg:w-11 lg:h-11"
             />
             <h1 className="text-2xl lg:text-3xl font-bold">SF-Symbols</h1>
-          </div>
+          </a>
         </header>
 
         <div className="mb-32 mx-5 md:mx-20 lg:mx-40 flex flex-col gap-1.5 text-zinc-600 text-sm relative">
