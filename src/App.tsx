@@ -104,7 +104,7 @@ function App() {
   return (
     <div className="antialiased font-medium">
       <img
-        className="w-96 h-96 absolute hidden lg:block z-0 top-16 lg:right-40 scale-110"
+        className="w-96 h-96 absolute -z-0 lg:top-16 top-32 lg:right-40 right-0 lg:scale-110 scale-90 origin-bottom"
         src="/images/bgImage.webp"
         alt="dashed SF-Symbols logo as the background image"
       />
@@ -184,7 +184,7 @@ function App() {
           </div>
           <div className="relative">
             <div className="absolute w-10 h-10 bg-gradient-to-l from-emerald-100 to-transparent right-0 top-0" />
-            {/* <div className="absolute w-10 h-10 bg-gradient-to-r from-emerald-100 to-transparent left-0 top-0" /> */}
+
             <ul className="grid grid-flow-col items-center gap-3 w-full pb-4 overflow-x-scroll">
               {Categories.map((item) => (
                 <li
@@ -195,7 +195,7 @@ function App() {
                   className={`border cursor-pointer border-black/20 px-5 py-1.5 rounded-lg w-max duration-100 ${
                     category !== item && "hover:bg-emerald-400/30"
                   } ${
-                    category === item ? "bg-emerald-400/60" : "bg-zinc-500/0"
+                    category === item ? "bg-emerald-400/60" : "bg-emerald-100"
                   }`}
                 >
                   <span className="capitalize">{item}</span>
