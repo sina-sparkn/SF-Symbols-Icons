@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import axios from "axios";
 import "./App.css";
 import { motion, useScroll, useTransform } from "framer-motion";
@@ -96,14 +96,14 @@ function App() {
   const scale = useTransform(scrollY, [400, 600], [0, 1]);
 
   return (
-    <div className="antialiased font-medium overflow-hidden bg-white">
+    <div className="antialiased font-medium">
       <img
         className="w-96 h-96 absolute hidden lg:block z-0 top-16 lg:right-40 scale-110"
         src="/images/bgImage.webp"
         alt="dashed SF-Symbols logo as the background image"
       />
-      <div className="bg-gradient-to-t  from-emerald-100 via-emerald-100 to-white">
-        <header className="flex items-center relative justify-between mx-5 md:mx-40 my-10 ">
+      <div className="bg-gradient-to-t from-emerald-100 via-emerald-100 to-white">
+        <header className="flex items-center relative justify-between mx-5 md:mx-40 my-10">
           <div className="flex items-center gap-3">
             <img
               src="/images/SF-Symbols.png"
@@ -178,7 +178,7 @@ function App() {
           </div>
           <div className="relative">
             <div className="absolute w-10 h-10 bg-gradient-to-l from-emerald-100 to-transparent right-0 top-0" />
-            <div className="absolute w-10 h-10 bg-gradient-to-r from-emerald-100 to-transparent left-0 top-0" />
+            {/* <div className="absolute w-10 h-10 bg-gradient-to-r from-emerald-100 to-transparent left-0 top-0" /> */}
             <ul className="grid grid-flow-col items-center gap-3 w-full pb-4 overflow-x-scroll">
               {Categories.map((item) => (
                 <li
@@ -200,130 +200,132 @@ function App() {
         </section>
       </div>
 
-      <section className="w-full p-5 sticky z-20 top-0 flex flex-col lg:flex-row lg:items-center text-zinc-600 mb-3 shadow bg-white md:px-40 lg:px-40">
-        <div className="flex items-center w-full">
-          <div className="w-5 h-5">
-            <svg
-              width="28"
-              height="28"
-              viewBox="0 0 28 28"
-              fill="none"
-              className="w-full h-full"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <g clipPath="url(#clip0_2124_88631)">
-                <path
-                  d="M3 11.3516C3 16.5078 7.19531 20.7031 12.3516 20.7031C14.3906 20.7031 16.2539 20.0469 17.7891 18.9453L23.5547 24.7227C23.8242 24.9922 24.1758 25.1211 24.5508 25.1211C25.3477 25.1211 25.8984 24.5234 25.8984 23.7383C25.8984 23.3633 25.7578 23.0234 25.5117 22.7773L19.7812 17.0117C20.9883 15.4414 21.7031 13.4844 21.7031 11.3516C21.7031 6.19531 17.5078 2 12.3516 2C7.19531 2 3 6.19531 3 11.3516ZM5.00391 11.3516C5.00391 7.29688 8.29688 4.00391 12.3516 4.00391C16.4062 4.00391 19.6992 7.29688 19.6992 11.3516C19.6992 15.4062 16.4062 18.6992 12.3516 18.6992C8.29688 18.6992 5.00391 15.4062 5.00391 11.3516Z"
-                  fill="gray"
-                  fillOpacity="1"
-                />
-              </g>
-              <defs>
-                <clipPath id="clip0_2124_88631">
-                  <rect
-                    width="22.8984"
-                    height="23.1211"
-                    fill="white"
-                    transform="translate(3 2)"
+      <section className="searchF z-50 w-full sticky h-full -top-1">
+        <section className="w-full h-full p-5 flex flex-col lg:flex-row lg:items-center text-zinc-600 mb-3 shadow bg-white md:px-40">
+          <div className="flex items-center w-full">
+            <div className="w-5 h-5">
+              <svg
+                width="28"
+                height="28"
+                viewBox="0 0 28 28"
+                fill="none"
+                className="w-full h-full"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <g clipPath="url(#clip0_2124_88631)">
+                  <path
+                    d="M3 11.3516C3 16.5078 7.19531 20.7031 12.3516 20.7031C14.3906 20.7031 16.2539 20.0469 17.7891 18.9453L23.5547 24.7227C23.8242 24.9922 24.1758 25.1211 24.5508 25.1211C25.3477 25.1211 25.8984 24.5234 25.8984 23.7383C25.8984 23.3633 25.7578 23.0234 25.5117 22.7773L19.7812 17.0117C20.9883 15.4414 21.7031 13.4844 21.7031 11.3516C21.7031 6.19531 17.5078 2 12.3516 2C7.19531 2 3 6.19531 3 11.3516ZM5.00391 11.3516C5.00391 7.29688 8.29688 4.00391 12.3516 4.00391C16.4062 4.00391 19.6992 7.29688 19.6992 11.3516C19.6992 15.4062 16.4062 18.6992 12.3516 18.6992C8.29688 18.6992 5.00391 15.4062 5.00391 11.3516Z"
+                    fill="gray"
+                    fillOpacity="1"
                   />
-                </clipPath>
-              </defs>
-            </svg>
-          </div>
+                </g>
+                <defs>
+                  <clipPath id="clip0_2124_88631">
+                    <rect
+                      width="22.8984"
+                      height="23.1211"
+                      fill="white"
+                      transform="translate(3 2)"
+                    />
+                  </clipPath>
+                </defs>
+              </svg>
+            </div>
 
-          <input
-            onChange={(e) => {
-              setSearchQuery(e.target.value);
-              const query = e.target.value.toLowerCase();
-              const filteredData = data?.filter((item) => {
-                if (item.svgName[0].includes(query)) return true;
+            <input
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                const query = e.target.value.toLowerCase();
+                const filteredData = data?.filter((item) => {
+                  if (item.svgName[0].includes(query)) return true;
 
-                // for (let i = 0; i < query.length; i++) {
-                //   const char = query.charAt(i);
+                  // for (let i = 0; i < query.length; i++) {
+                  //   const char = query.charAt(i);
 
-                //   if (item.svgName[0].includes(char)) return true;
+                  //   if (item.svgName[0].includes(char)) return true;
 
-                //   if (
-                //     item.svgName[0]
-                //       .split("-")
-                //       .map((e) => e[0])
-                //       .includes(char)
-                //   ) {
-                //     return true;
-                //   }
+                  //   if (
+                  //     item.svgName[0]
+                  //       .split("-")
+                  //       .map((e) => e[0])
+                  //       .includes(char)
+                  //   ) {
+                  //     return true;
+                  //   }
+                  // }
+                });
+
+                console.log(e.target.value);
+                console.log(filteredData);
+
+                // if (filteredData?.length === 0) {
+                //   const nonFilteredData = data?.filter((item) =>
+                //     item.svgName[0].includes("")
+                //   );
+
+                //   setData(nonFilteredData);
                 // }
-              });
 
-              console.log(e.target.value);
-              console.log(filteredData);
-
-              // if (filteredData?.length === 0) {
-              //   const nonFilteredData = data?.filter((item) =>
-              //     item.svgName[0].includes("")
-              //   );
-
-              //   setData(nonFilteredData);
-              // }
-
-              if (query === "") {
-                setSearchedData(data);
-              } else {
-                setSearchedData(filteredData);
-              }
-            }}
-            className="w-full p-3 py-5 outline-transparent"
-            placeholder={`Search ${category} symbols ...`}
-            type="text"
-            name="search"
-            value={searchQuery}
-          />
-        </div>
-
-        <div className="flex flex-col text-black mt-2 lg:mt-0">
-          <div className="flex">
-            <button
-              onClick={() => {
-                setSelectedOption("All");
-                setSearchedData(data);
+                if (query === "") {
+                  setSearchedData(data);
+                } else {
+                  setSearchedData(filteredData);
+                }
               }}
-              className={`border border-emerald-200 w-full lg:px-7 rounded-l-md py-1 duration-200 ${
-                selectedOption !== "All" && "hover:bg-emerald-100"
-              } ${selectedOption === "All" && "bg-emerald-200"}`}
-            >
-              All
-            </button>
-            <button
-              onClick={() => {
-                setSelectedOption("Outline");
-                const filteredData = data?.filter(
-                  (item) => !item.svgName[0].includes("fill")
-                );
-
-                setSearchedData(filteredData);
-              }}
-              className={`border border-emerald-200 w-full lg:px-7 py-1 duration-200 ${
-                selectedOption !== "Outline" && "hover:bg-emerald-100"
-              } ${selectedOption === "Outline" && "bg-emerald-200"}`}
-            >
-              Outline
-            </button>
-            <button
-              onClick={() => {
-                setSelectedOption("Filled");
-                const filteredData = data?.filter((item) =>
-                  item.svgName[0].includes("fill")
-                );
-
-                setSearchedData(filteredData);
-              }}
-              className={`border border-emerald-200 w-full lg:px-7 rounded-r-md py-1 duration-200 ${
-                selectedOption !== "Filled" && "hover:bg-emerald-100"
-              } ${selectedOption === "Filled" && "bg-emerald-200"}`}
-            >
-              Filled
-            </button>
+              className="w-full p-3 py-5 outline-transparent"
+              placeholder={`Search ${category} symbols ...`}
+              type="text"
+              name="search"
+              value={searchQuery}
+            />
           </div>
-        </div>
+
+          <div className="flex flex-col text-black mt-2 lg:mt-0">
+            <div className="flex">
+              <button
+                onClick={() => {
+                  setSelectedOption("All");
+                  setSearchedData(data);
+                }}
+                className={`border border-emerald-200 w-full lg:px-7 rounded-l-md py-1 duration-200 ${
+                  selectedOption !== "All" && "hover:bg-emerald-100"
+                } ${selectedOption === "All" && "bg-emerald-200"}`}
+              >
+                All
+              </button>
+              <button
+                onClick={() => {
+                  setSelectedOption("Outline");
+                  const filteredData = data?.filter(
+                    (item) => !item.svgName[0].includes("fill")
+                  );
+
+                  setSearchedData(filteredData);
+                }}
+                className={`border border-emerald-200 w-full lg:px-7 py-1 duration-200 ${
+                  selectedOption !== "Outline" && "hover:bg-emerald-100"
+                } ${selectedOption === "Outline" && "bg-emerald-200"}`}
+              >
+                Outline
+              </button>
+              <button
+                onClick={() => {
+                  setSelectedOption("Filled");
+                  const filteredData = data?.filter((item) =>
+                    item.svgName[0].includes("fill")
+                  );
+
+                  setSearchedData(filteredData);
+                }}
+                className={`border border-emerald-200 w-full lg:px-7 rounded-r-md py-1 duration-200 ${
+                  selectedOption !== "Filled" && "hover:bg-emerald-100"
+                } ${selectedOption === "Filled" && "bg-emerald-200"}`}
+              >
+                Filled
+              </button>
+            </div>
+          </div>
+        </section>
       </section>
 
       <section className="mx-5 md:mx-40 mt-7 mb-10">
@@ -334,32 +336,34 @@ function App() {
             </div>
           )}
 
-          {searchedData?.map((file, index) => (
-            <div
-              className="Container flex flex-col gap-1 lg:gap-2 w-36 xl:w-36 h-auto"
-              key={index}
-            >
-              <div className="svgContainer border relative overflow-hidden duration-200 rounded-xl w-36 h-36 xl:w-36 xl:h-36 flex items-center justify-center">
-                <div className="cover bg-transparent w-full h-full absolute z-10"></div>
-                <button
-                  onClick={() => {
-                    copyTextToClipboard(file.svgCode, file.svgName[0]);
-                  }}
-                  className="CopyButton absolute w-full h-1/2 bottom-0 flex items-center justify-center p-1"
-                >
-                  <p className=" text-sm font-bold text-zinc-500  bg-zinc-200/30 hover:bg-emerald-400/40 hover:text-zinc-800 w-full h-full rounded-lg flex items-center justify-center">
-                    {copied.isCopied && copied.name === file.svgName[0]
-                      ? "Copied!"
-                      : "Copy JSX"}
-                  </p>
-                </button>
-                <div className="w-fit">{renderSvgCode(file.svgCode)}</div>
+          <Suspense fallback={<div>loading ...</div>}>
+            {searchedData?.map((file, index) => (
+              <div
+                className="Container flex flex-col gap-1 lg:gap-2 w-36 xl:w-36 h-auto"
+                key={index}
+              >
+                <div className="svgContainer border relative overflow-hidden duration-200 rounded-xl w-36 h-36 xl:w-36 xl:h-36 flex items-center justify-center">
+                  {/* <div className="cover bg-transparent w-full h-full absolute z-10"></div> */}
+                  <button
+                    onClick={() => {
+                      copyTextToClipboard(file.svgCode, file.svgName[0]);
+                    }}
+                    className="CopyButton absolute w-full h-1/2 bottom-0 flex items-center justify-center p-1"
+                  >
+                    <p className=" text-sm font-bold text-zinc-500  bg-zinc-200/30 hover:bg-emerald-400/40 hover:text-zinc-800 w-full h-full rounded-lg flex items-center justify-center">
+                      {copied.isCopied && copied.name === file.svgName[0]
+                        ? "Copied!"
+                        : "Copy JSX"}
+                    </p>
+                  </button>
+                  <div className="w-fit">{renderSvgCode(file.svgCode)}</div>
+                </div>
+                <p className="text-sm h-10 text-zinc-400 font-medium truncate text-center">
+                  {file.svgName}
+                </p>
               </div>
-              <p className="text-sm h-10 text-zinc-400 font-medium truncate text-center">
-                {file.svgName}
-              </p>
-            </div>
-          ))}
+            ))}
+          </Suspense>
         </section>
       </section>
       <hr />
@@ -403,7 +407,7 @@ function App() {
           window.scrollTo(0, 0);
         }}
         style={{ scale }}
-        className="fixed duration-300 w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center outline outline-1 outline-zinc-400 bg-emerald-200 cursor-pointer rounded-full bottom-3 right-3"
+        className="fixed duration-300 w-11 h-11 lg:w-12 lg:h-12 flex items-center justify-center outline outline-1 outline-zinc-400 bg-emerald-200 cursor-pointer rounded-full bottom-3 right-3"
       >
         <svg
           width="28"

@@ -37,11 +37,3 @@
   scale: 1;
   opacity: 1;
 }
-
-.svgContainer .cover {
-  transition: all 0.2s ease-in-out;
-}
-
-.svgContainer:hover .cover {
-  display: none;
-}
