@@ -9,6 +9,39 @@ type Data = {
   svgName: string[];
 };
 
+const mockData = [
+  {
+    id: 1,
+    svgCode: "",
+    svgName: [""],
+  },
+  {
+    id: 2,
+    svgCode: "",
+    svgName: [""],
+  },
+  {
+    id: 3,
+    svgCode: "",
+    svgName: [""],
+  },
+  {
+    id: 4,
+    svgCode: "",
+    svgName: [""],
+  },
+  {
+    id: 5,
+    svgCode: "",
+    svgName: [""],
+  },
+  {
+    id: 6,
+    svgCode: "",
+    svgName: [""],
+  },
+];
+
 function App() {
   const [data, setData] = useState<Data[]>();
   const [searchedData, setSearchedData] = useState<Data[]>();
@@ -30,6 +63,9 @@ function App() {
   useEffect(() => {
     async function getData() {
       setLoading(true);
+      setData(mockData);
+      setSearchedData(mockData);
+      setFilteredData(mockData);
       await axios
         .get(
           `https://lktiktfqfsppoevfxkla.supabase.co/storage/v1/object/public/svgs/sf-symbols/${category}.json`
