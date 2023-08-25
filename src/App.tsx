@@ -17,6 +17,10 @@ function App() {
   const [data, setData] = useState<Data[]>();
   const [searchedData, setSearchedData] = useState<Data[]>();
   const [category, setCategory] = useState("communication");
+  const [copied, setCopied] = useState<{ isCopied: boolean; name: string }>({
+    isCopied: false,
+    name: "",
+  });
 
   useEffect(() => {
     async function getData() {
@@ -44,9 +48,15 @@ function App() {
     }
   }
 
-  async function copyTextToClipboard(text: string) {
+  async function copyTextToClipboard(text: string, name: string) {
     try {
       await navigator.clipboard.writeText(text);
+
+      setCopied({ isCopied: true, name });
+
+      setTimeout(() => {
+        setCopied({ isCopied: false, name });
+      }, 1500);
     } catch (error) {
       console.error(error);
     }
@@ -86,36 +96,69 @@ function App() {
   const scale = useTransform(scrollY, [400, 600], [0, 1]);
 
   return (
-    <div className="antialiased font-medium">
-      <motion.button
-        onClick={() => {
-          window.scrollTo(0, 0);
-        }}
-        style={{ scale }}
-        className="fixed duration-300 w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center outline outline-1 outline-zinc-400 bg-emerald-200 cursor-pointer rounded-full bottom-3 right-3"
-      >
-        <svg
-          width="28"
-          height="28"
-          viewBox="0 0 28 28"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          className="w-5 h-5 lg:w-6 lg:h-6"
-        >
-          <path
-            d="M13.8828 25.1367C14.4922 25.1367 14.9258 24.7148 14.9258 24.1055V8.67188L14.8086 5.17969L14.1406 5.41406L18.3477 10.0195L21.0195 12.6445C21.207 12.832 21.4766 12.9258 21.7578 12.9258C22.3438 12.9258 22.7656 12.4805 22.7656 11.9062C22.7656 11.625 22.6719 11.3789 22.4492 11.1445L14.668 3.35156C14.4453 3.11719 14.1758 3 13.8828 3C13.5898 3 13.3203 3.11719 13.0977 3.35156L5.32812 11.1445C5.10547 11.3789 5 11.625 5 11.9062C5 12.4805 5.42188 12.9258 6.00781 12.9258C6.28906 12.9258 6.57031 12.832 6.74609 12.6445L9.41797 10.0195L13.6133 5.41406L12.957 5.17969L12.8398 8.67188V24.1055C12.8398 24.7148 13.2734 25.1367 13.8828 25.1367Z"
-            fill="black"
-            fillOpacity="0.8"
-          />
-        </svg>
-      </motion.button>
+    <div className="antialiased font-medium overflow-hidden bg-white">
+      <img
+        className="w-96 h-96 absolute hidden lg:block z-0 top-16 lg:right-40 scale-110"
+        src="/images/bgImage.webp"
+        alt="dashed SF-Symbols logo as the background image"
+      />
+      <div className="bg-gradient-to-t  from-emerald-100 via-emerald-100 to-white">
+        <header className="flex items-center relative justify-between mx-5 md:mx-40 my-10 ">
+          <div className="flex items-center gap-3">
+            <img
+              src="/images/SF-Symbols.png"
+              alt="SF-Symbols Logo"
+              className="w-9 h-9 md:h-10 md:w-10 lg:w-11 lg:h-11"
+            />
+            <h1 className="text-2xl lg:text-3xl font-bold">SF-Symbols</h1>
+          </div>
+          <a
+            href="https://github.com/sina-sparkn/SF-Symbols-Icons"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 text-xs md:text-base hover:bg-emerald-200/80 duration-200 py-1.5 px-3 pr-3 pl-2.5 rounded-full"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="1em"
+              viewBox="0 0 496 512"
+              className="w-5 h-5"
+            >
+              <path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z" />
+            </svg>
+            Give it a Star
+          </a>
+        </header>
 
-      <div className="bg-gradient-to-t from-emerald-100 via-emerald-100 to-white">
-        <h1 className="text-3xl mb-10 font-bold mx-5 md:mx-40 py-10">
-          SF-Symbols
-        </h1>
+        <div className="mb-36 mx-5 md:mx-40 flex flex-wrap gap-1.5 text-zinc-600 text-sm relative">
+          <p>5000+ Symbols</p> •
+          <div>
+            <a
+              className="underline underline-offset-2 hover:no-underline"
+              target="_blank"
+              rel="noopener noreferrer"
+              href="https://creativecommons.org/licenses/by/4.0/"
+            >
+              CC BY 4.0
+            </a>
+            <span className="ml-1">License</span>
+          </div>
+          •
+          <div>
+            Symbols by{" "}
+            <a
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline underline-offset-2 hover:no-underline"
+              href="https://uladluch.notion.site"
+            >
+              Ulad Luch
+            </a>
+          </div>
+          • <p>React Compatible</p>
+        </div>
 
-        <section className="flex flex-col gap-3 mx-5 md:mx-40">
+        <section className="flex flex-col gap-3 mx-5 md:mx-40 relative">
           <div className="flex items-start gap-1">
             <h2 className="uppercase text-xs text-black/70">Categories</h2>
             <svg
@@ -133,25 +176,31 @@ function App() {
               />
             </svg>
           </div>
-          <div className="grid grid-flow-col items-center gap-3 w-full pb-4 overflow-x-scroll">
-            {Categories.map((item) => (
-              <button
-                key={item}
-                onClick={() => {
-                  setCategory(item);
-                }}
-                className={`border border-black/20 px-5 py-1.5 rounded-lg w-max duration-100 ${
-                  category !== item && "hover:bg-emerald-400/30"
-                } ${category === item ? "bg-emerald-400/80" : "bg-zinc-500/0"}`}
-              >
-                <span className="capitalize">{item}</span>
-              </button>
-            ))}
+          <div className="relative">
+            <div className="absolute w-10 h-10 bg-gradient-to-l from-emerald-100 to-transparent right-0 top-0" />
+            <div className="absolute w-10 h-10 bg-gradient-to-r from-emerald-100 to-transparent left-0 top-0" />
+            <ul className="grid grid-flow-col items-center gap-3 w-full pb-4 overflow-x-scroll">
+              {Categories.map((item) => (
+                <li
+                  key={item}
+                  onClick={() => {
+                    setCategory(item);
+                  }}
+                  className={`border cursor-pointer border-black/20 px-5 py-1.5 rounded-lg w-max duration-100 ${
+                    category !== item && "hover:bg-emerald-400/30"
+                  } ${
+                    category === item ? "bg-emerald-400/60" : "bg-zinc-500/0"
+                  }`}
+                >
+                  <span className="capitalize">{item}</span>
+                </li>
+              ))}
+            </ul>
           </div>
         </section>
       </div>
 
-      <section className="w-full p-5 sticky top-0 flex flex-col lg:flex-row text-zinc-600 mb-3 shadow bg-white md:px-40 lg:px-40">
+      <section className="w-full p-5 sticky z-20 top-0 flex flex-col lg:flex-row lg:items-center text-zinc-600 mb-3 shadow bg-white md:px-40 lg:px-40">
         <div className="flex items-center w-full">
           <div className="w-5 h-5">
             <svg
@@ -222,15 +271,15 @@ function App() {
                 setSearchedData(filteredData);
               }
             }}
-            className="w-full p-3 outline-transparent"
-            placeholder="Search all icons ..."
+            className="w-full p-3 py-5 outline-transparent"
+            placeholder={`Search ${category} symbols ...`}
             type="text"
             name="search"
             value={searchQuery}
           />
         </div>
 
-        <div className="flex flex-col text-black mt-2">
+        <div className="flex flex-col text-black mt-2 lg:mt-0">
           <div className="flex">
             <button
               onClick={() => {
@@ -274,23 +323,6 @@ function App() {
               Filled
             </button>
           </div>
-          <h3 className="text-sm mt-5 text-zinc-500 capitalize flex items-center gap-1">
-            SF-Symbols{" "}
-            <svg
-              width="28"
-              height="28"
-              viewBox="0 0 28 28"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              className="w-3.5 h-3.5"
-            >
-              <path
-                d="M19.4609 14.1719C19.4609 13.8789 19.3438 13.6094 19.1211 13.3984L9.83984 4.30469C9.62891 4.10547 9.37109 4 9.06641 4C8.46875 4 8 4.45703 8 5.06641C8 5.35938 8.11719 5.62891 8.30469 5.82812L16.8359 14.1719L8.30469 22.5156C8.11719 22.7148 8 22.9727 8 23.2773C8 23.8867 8.46875 24.3438 9.06641 24.3438C9.37109 24.3438 9.62891 24.2383 9.83984 24.0273L19.1211 14.9453C19.3438 14.7227 19.4609 14.4648 19.4609 14.1719Z"
-                fill="rgb(113 113 122)"
-              />
-            </svg>
-            {category} Icons
-          </h3>
         </div>
       </section>
 
@@ -304,15 +336,23 @@ function App() {
 
           {searchedData?.map((file, index) => (
             <div
-              className="svgContainer flex flex-col gap-1 lg:gap-2 w-36 xl:w-36 h-auto"
+              className="Container flex flex-col gap-1 lg:gap-2 w-36 xl:w-36 h-auto"
               key={index}
             >
-              <div
-                onClick={() => {
-                  copyTextToClipboard(file.svgCode);
-                }}
-                className="border hover:border-emerald-400/70 duration-200 rounded-xl cursor-pointer w-36 h-36 xl:w-36 xl:h-36 flex items-center justify-center"
-              >
+              <div className="svgContainer border relative overflow-hidden duration-200 rounded-xl w-36 h-36 xl:w-36 xl:h-36 flex items-center justify-center">
+                <div className="cover bg-transparent w-full h-full absolute z-10"></div>
+                <button
+                  onClick={() => {
+                    copyTextToClipboard(file.svgCode, file.svgName[0]);
+                  }}
+                  className="CopyButton absolute w-full h-1/2 bottom-0 flex items-center justify-center p-1"
+                >
+                  <p className=" text-sm font-bold text-zinc-500  bg-zinc-200/30 hover:bg-emerald-400/40 hover:text-zinc-800 w-full h-full rounded-lg flex items-center justify-center">
+                    {copied.isCopied && copied.name === file.svgName[0]
+                      ? "Copied!"
+                      : "Copy JSX"}
+                  </p>
+                </button>
                 <div className="w-fit">{renderSvgCode(file.svgCode)}</div>
               </div>
               <p className="text-sm h-10 text-zinc-400 font-medium truncate text-center">
@@ -322,6 +362,64 @@ function App() {
           ))}
         </section>
       </section>
+      <hr />
+      <footer className="mt-10 mb-20 mx-5 md:mx-40 flex justify-between text-sm">
+        <div className="flex items-center gap-2">
+          <img
+            className="w-5 h-5"
+            src="/images/rounded-logo.svg"
+            alt="Sina Sparkn Logo"
+          />
+          <a
+            href="https://www.sinasparkn.pro/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Made by{" "}
+            <span className="hover:text-[#FF2A17] duration-200 font-semibold">
+              Sina Sparkn
+            </span>
+          </a>
+        </div>
+        <a
+          href="https://github.com/sina-sparkn/SF-Symbols-Icons"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-2 hover:bg-emerald-200/80 duration-200 py-1.5 px-3 pr-3 pl-2.5 rounded-full"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            height="1em"
+            viewBox="0 0 496 512"
+            className="w-5 h-5"
+          >
+            <path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z" />
+          </svg>
+          Give it a Star
+        </a>
+      </footer>
+      <motion.button
+        onClick={() => {
+          window.scrollTo(0, 0);
+        }}
+        style={{ scale }}
+        className="fixed duration-300 w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center outline outline-1 outline-zinc-400 bg-emerald-200 cursor-pointer rounded-full bottom-3 right-3"
+      >
+        <svg
+          width="28"
+          height="28"
+          viewBox="0 0 28 28"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          className="w-5 h-5 lg:w-6 lg:h-6"
+        >
+          <path
+            d="M13.8828 25.1367C14.4922 25.1367 14.9258 24.7148 14.9258 24.1055V8.67188L14.8086 5.17969L14.1406 5.41406L18.3477 10.0195L21.0195 12.6445C21.207 12.832 21.4766 12.9258 21.7578 12.9258C22.3438 12.9258 22.7656 12.4805 22.7656 11.9062C22.7656 11.625 22.6719 11.3789 22.4492 11.1445L14.668 3.35156C14.4453 3.11719 14.1758 3 13.8828 3C13.5898 3 13.3203 3.11719 13.0977 3.35156L5.32812 11.1445C5.10547 11.3789 5 11.625 5 11.9062C5 12.4805 5.42188 12.9258 6.00781 12.9258C6.28906 12.9258 6.57031 12.832 6.74609 12.6445L9.41797 10.0195L13.6133 5.41406L12.957 5.17969L12.8398 8.67188V24.1055C12.8398 24.7148 13.2734 25.1367 13.8828 25.1367Z"
+            fill="black"
+            fillOpacity="0.8"
+          />
+        </svg>
+      </motion.button>
     </div>
   );
 }

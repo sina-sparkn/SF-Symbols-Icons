@@ -1,15 +1,15 @@
-.svgContainer p {
+.Container p {
   transition: all 0.2s ease-in-out;
 }
 
-.svgContainer:hover p {
+.Container:hover p {
   overflow: visible;
   text-overflow: unset;
   white-space: normal;
 }
 
 ::-webkit-scrollbar {
-  width: 0px;
+  width: 7px;
   height: 4px;
 }
 
@@ -25,4 +25,23 @@
 
 ::-webkit-scrollbar-thumb:hover {
   background: #227358;
+}
+
+.Container .svgContainer .CopyButton {
+  scale: 0.9;
+  opacity: 0;
+  transition: all 0.25s ease-in-out;
+}
+
+.Container .svgContainer:hover .CopyButton {
+  scale: 1;
+  opacity: 1;
+}
+
+.svgContainer .cover {
+  transition: all 0.2s ease-in-out;
+}
+
+.svgContainer:hover .cover {
+  display: none;
 }
