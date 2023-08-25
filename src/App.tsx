@@ -149,7 +149,7 @@ function App() {
               </a>
             </div>
           </div>
-          <div className="flex flex-col sm:flex-row gap-2 sm:items-center mt-5">
+          <div className="flex gap-2.5 items-center mt-5">
             <a
               target="_blank"
               rel="noopener noreferrer"
