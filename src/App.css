@@ -10,7 +10,7 @@
 
 ::-webkit-scrollbar {
   width: 7px;
-  height: 4px;
+  height: 7px;
 }
 
 ::-webkit-scrollbar-track {
@@ -19,12 +19,12 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #288767;
+  background: #2fd4cf;
   border-radius: 50px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #227358;
+  background: #28b6b2;
 }
 
 .Container .svgContainer .CopyButton {
@@ -36,4 +36,12 @@
 .Container .svgContainer:hover .CopyButton {
   scale: 1;
   opacity: 1;
+}
+
+.svgContainer .svgs {
+  transition: all 0.25s ease-in-out;
+}
+
+.svgContainer:hover .svgs {
+  scale: 1.2;
 }
