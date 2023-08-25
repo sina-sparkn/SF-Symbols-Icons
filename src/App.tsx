@@ -28,7 +28,9 @@ function App() {
     setLoading(true);
     async function getData() {
       await axios
-        .get(`/jsons/${category}.json`)
+        .get(
+          `https://lktiktfqfsppoevfxkla.supabase.co/storage/v1/object/public/svgs/sf-symbols/${category}.json`
+        )
         .then((res) => {
           setData(res.data);
           setSearchedData(res.data);
@@ -324,7 +326,11 @@ function App() {
               key={index}
             >
               {!loading ? (
-                <>
+                <motion.div
+                  key={category}
+                  initial={{ opacity: 0, y: "30px" }}
+                  animate={{ opacity: 1, y: "0px" }}
+                >
                   <div className="svgContainer border relative overflow-hidden duration-200 rounded-xl w-36 h-36 xl:w-36 xl:h-36 flex items-center justify-center">
                     <button
                       onClick={() => {
@@ -340,12 +346,15 @@ function App() {
                     </button>
                     <div className="w-fit">{renderSvgCode(file.svgCode)}</div>
                   </div>
-                  <p className="text-sm h-10 text-zinc-400 font-medium truncate text-center">
+                  <p className="text-sm h-10 text-zinc-400 font-medium truncate text-center mt-1.5">
                     {file.svgName}
                   </p>
-                </>
+                </motion.div>
               ) : (
-                <div className="svgContainer bg-slate-200 relative overflow-hidden duration-200 rounded-xl w-36 h-36 xl:w-36 xl:h-36 flex items-center justify-center"></div>
+                <>
+                  <div className="svgContainer bg-slate-100 relative overflow-hidden duration-200 rounded-xl w-36 h-36 xl:w-36 xl:h-36 flex items-center justify-center"></div>
+                  <div className="svgContainer bg-slate-100 relative overflow-hidden duration-200 rounded-xl w-36 h-5 xl:w-36 xl:h-5 mt-1 flex items-center justify-center"></div>
+                </>
               )}
             </div>
           ))}
