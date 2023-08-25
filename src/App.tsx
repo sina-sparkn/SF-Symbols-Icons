@@ -137,26 +137,24 @@ function App() {
               </a>
               <span className="ml-1">License</span>
             </div>
-            •
+            • <p>React Compatible</p>•
             <div>
-              Symbols by{" "}
+              Code by{" "}
               <a
                 target="_blank"
                 rel="noopener noreferrer"
-                className="underline underline-offset-2 hover:no-underline"
-                href="https://uladluch.notion.site"
+                href="https://www.sinasparkn.pro/"
               >
-                Ulad Luch
+                Sina Sparkn
               </a>
             </div>
-            • <p>React Compatible</p>
           </div>
           <div className="flex flex-col sm:flex-row gap-2 sm:items-center mt-5">
             <a
               target="_blank"
               rel="noopener noreferrer"
               href="https://www.figma.com/community/file/886999666531731323"
-              className="hover:bg-emerald-300 duration-200 flex w-fit items-center gap-2 border border-zinc-300 rounded-lg px-5 py-2 text-zinc-900 "
+              className="hover:bg-emerald-200 duration-200 flex w-fit items-center gap-2 border border-zinc-300 rounded-lg px-5 py-2 text-zinc-900 "
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -172,7 +170,7 @@ function App() {
               href="https://github.com/sina-sparkn/SF-Symbols-Icons"
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:bg-emerald-300 duration-200 flex w-fit items-center gap-2 border border-zinc-300 rounded-lg px-5 py-2 text-zinc-900 "
+              className="hover:bg-emerald-200 duration-200 flex w-fit items-center gap-2 border border-zinc-300 rounded-lg px-5 py-2 text-zinc-900 "
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -395,7 +393,7 @@ function App() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            Made by{" "}
+            Code by{" "}
             <span className="hover:text-[#FF2A17] duration-200 font-semibold">
               Sina Sparkn
             </span>
