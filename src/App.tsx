@@ -16,6 +16,7 @@ function App() {
   const [searchQuery, setSearchQuery] = useState("");
   const [data, setData] = useState<Data[]>();
   const [searchedData, setSearchedData] = useState<Data[]>();
+  const [filteredData, setFilteredData] = useState<Data[]>();
   const [category, setCategory] = useState("communication");
   const [copied, setCopied] = useState<{ isCopied: boolean; name: string }>({
     isCopied: false,
@@ -31,6 +32,7 @@ function App() {
         .then((res) => {
           setData(res.data);
           setSearchedData(res.data);
+          setFilteredData(res.data);
           setSearchQuery("");
           setSelectedOption("All");
           setLoading(false);
@@ -242,38 +244,14 @@ function App() {
                 const query = e.target.value.toLowerCase();
                 const filteredData = data?.filter((item) => {
                   if (item.svgName[0].includes(query)) return true;
-
-                  // for (let i = 0; i < query.length; i++) {
-                  //   const char = query.charAt(i);
-
-                  //   if (item.svgName[0].includes(char)) return true;
-
-                  //   if (
-                  //     item.svgName[0]
-                  //       .split("-")
-                  //       .map((e) => e[0])
-                  //       .includes(char)
-                  //   ) {
-                  //     return true;
-                  //   }
-                  // }
                 });
-
-                console.log(e.target.value);
-                console.log(filteredData);
-
-                // if (filteredData?.length === 0) {
-                //   const nonFilteredData = data?.filter((item) =>
-                //     item.svgName[0].includes("")
-                //   );
-
-                //   setData(nonFilteredData);
-                // }
 
                 if (query === "") {
                   setSearchedData(data);
+                  setFilteredData(data);
                 } else {
                   setSearchedData(filteredData);
+                  setFilteredData(filteredData);
                 }
               }}
               className="w-full p-3 py-5 outline-transparent"
@@ -289,7 +267,7 @@ function App() {
               <button
                 onClick={() => {
                   setSelectedOption("All");
-                  setSearchedData(data);
+                  setFilteredData(searchedData);
                 }}
                 className={`border border-emerald-200 w-full lg:px-7 rounded-l-md py-1 duration-200 ${
                   selectedOption !== "All" && "hover:bg-emerald-100"
@@ -300,11 +278,11 @@ function App() {
               <button
                 onClick={() => {
                   setSelectedOption("Outline");
-                  const filteredData = data?.filter(
+                  const filteredData = searchedData?.filter(
                     (item) => !item.svgName[0].includes("fill")
                   );
 
-                  setSearchedData(filteredData);
+                  setFilteredData(filteredData);
                 }}
                 className={`border border-emerald-200 w-full lg:px-7 py-1 duration-200 ${
                   selectedOption !== "Outline" && "hover:bg-emerald-100"
@@ -315,11 +293,11 @@ function App() {
               <button
                 onClick={() => {
                   setSelectedOption("Filled");
-                  const filteredData = data?.filter((item) =>
+                  const filteredData = searchedData?.filter((item) =>
                     item.svgName[0].includes("fill")
                   );
 
-                  setSearchedData(filteredData);
+                  setFilteredData(filteredData);
                 }}
                 className={`border border-emerald-200 w-full lg:px-7 rounded-r-md py-1 duration-200 ${
                   selectedOption !== "Filled" && "hover:bg-emerald-100"
@@ -334,13 +312,13 @@ function App() {
 
       <section className="mx-5 md:mx-20 lg:mx-40 mt-7 mb-10">
         <section className="grid grid-cols-2 sm:grid-cols-3 w-full md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 justify-items-center content-center place-items-center place-content-center gap-y-7 ">
-          {searchedData?.length === 0 && (
-            <div className="w-full text-zinc-500 m-auto flex items-center justify-center mt-40 absolute">
+          {filteredData?.length === 0 && (
+            <div className="w-full text-zinc-500  flex items-center justify-center mt-5 mb-2 absolute">
               No SF-Symbols for "{searchQuery}"
             </div>
           )}
 
-          {searchedData?.map((file, index) => (
+          {filteredData?.map((file, index) => (
             <div
               className="Container flex flex-col gap-1 lg:gap-2 w-36 xl:w-36 h-auto"
               key={index}
