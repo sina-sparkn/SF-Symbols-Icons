@@ -79,7 +79,7 @@ function App() {
     "camera & photos",
     "gaming",
     "connectivity",
-    "Transportation",
+    "transportation",
     "automation",
     "accessibility",
     "privacy & security",
@@ -328,8 +328,8 @@ function App() {
               {!loading ? (
                 <motion.div
                   key={category}
-                  initial={{ opacity: 0, y: "30px" }}
-                  animate={{ opacity: 1, y: "0px" }}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
                 >
                   <div className="svgContainer border relative overflow-hidden duration-200 rounded-xl w-36 h-36 xl:w-36 xl:h-36 flex items-center justify-center">
                     <button
