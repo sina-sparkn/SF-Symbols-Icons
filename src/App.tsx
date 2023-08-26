@@ -331,9 +331,9 @@ function App() {
                   setFilteredData(filteredData);
                 }
               }}
-              className="w-full p-3 py-2.5 outline-transparent"
+              className="w-full p-3 py-4 outline-transparent rounded-xl mx-1"
               placeholder={`Search ${category} symbols ...`}
-              type="text"
+              type="search"
               name="search"
               value={searchQuery}
             />
