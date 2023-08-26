@@ -512,7 +512,7 @@ function App() {
           </a>
         </div>
         <div className="text-xs w-full text-center flex gap-1 flex-wrap justify-end">
-          <span className="ml-1">Only Symbols Under</span>{" "}
+          <span className="ml-1">Symbols are under</span>{" "}
           <a
             className="underline underline-offset-2 hover:no-underline text-blue-500 flex items-end gap-0.5"
             target="_blank"
