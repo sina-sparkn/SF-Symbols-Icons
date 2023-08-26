@@ -165,7 +165,7 @@ function App() {
   return (
     <div className="antialiased font-medium">
       <img
-        className="w-96 h-96  absolute -z-0 lg:top-16 top-[4.8rem] lg:right-40 right-0 lg:scale-110 scale-[0.60] origin-bottom"
+        className="bgImage w-96 h-96 hidden lg:block absolute -z-0 lg:top-16 top-[4.8rem] lg:right-40 right-0 lg:scale-110 scale-[0.60] origin-bottom"
         src="/images/bgImage.webp"
         alt="dashed SF-Symbols logo as the background image"
       />
@@ -174,8 +174,9 @@ function App() {
         <header className="flex items-center relative justify-between mx-5 md:mx-20 lg:mx-40 my-10">
           <a
             href="https://sf-symbols.vercel.app"
-            className="flex items-center gap-3"
+            className="flex items-center gap-3 relative"
           >
+            <div className="absolute bg-transparent rounded-xl w-full h-full" />
             <img
               src="/images/SF-Symbols.png"
               alt="SF-Symbols Logo"
@@ -417,7 +418,7 @@ function App() {
                   fill="currentColor"
                 />
               </svg>
-              No SF-Symbols for "{searchQuery}"
+              no SF-Symbols for "{searchQuery}"
             </div>
           )}
 
@@ -468,8 +469,22 @@ function App() {
                 </motion.div>
               ) : (
                 <>
-                  <div className="svgContainer bg-slate-100 relative overflow-hidden duration-200 rounded-xl w-36 h-36 xl:w-36 xl:h-36 flex items-center justify-center"></div>
-                  <div className="svgContainer bg-slate-100 relative overflow-hidden duration-200 rounded-xl w-36 h-5 xl:w-36 xl:h-5 mt-1 flex items-center justify-center"></div>
+                  <div className="svgContainer animate-pulse duration-1000 bg-slate-100 relative overflow-hidden rounded-xl w-36 h-36 xl:w-36 xl:h-36 flex items-center justify-center">
+                    <svg
+                      className="w-9 h-9"
+                      width="28"
+                      height="28"
+                      viewBox="0 0 28 28"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M3.67578 21.1607L11.6914 25.7778C13.0742 26.5747 14.4219 26.5864 15.8281 25.7778L23.8438 21.1607C24.9336 20.5278 25.5195 19.9067 25.5195 18.2075V9.09036C25.5195 7.43802 24.9219 6.84036 23.9258 6.26614L15.8867 1.62552C14.4336 0.781769 13.0508 0.805207 11.6328 1.62552L3.60547 6.26614C2.59766 6.84036 2 7.43802 2 9.09036V18.2075C2 19.9067 2.59766 20.5278 3.67578 21.1607ZM4.73047 19.4849C4.09766 19.1216 3.88672 18.8052 3.88672 18.1607V9.13724C3.88672 8.5513 4.08594 8.25833 4.64844 7.94192L12.418 3.41849C13.3555 2.89114 14.1406 2.8677 15.1016 3.41849L22.8711 7.94192C23.4336 8.25833 23.6328 8.5513 23.6328 9.13724V18.1607C23.6328 18.8052 23.4336 19.1216 22.7891 19.4849L15.043 23.9732C14.1172 24.5005 13.3789 24.4888 12.4766 23.9732L4.73047 19.4849Z"
+                        fill="#acb5c280"
+                      />
+                    </svg>
+                  </div>
+                  <div className="svgContainer animate-pulse duration-1000 bg-slate-100 relative overflow-hidden rounded-xl w-36 h-5 xl:w-36 xl:h-5 mt-1 flex items-center justify-center"></div>
                 </>
               )}
             </div>
