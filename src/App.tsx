@@ -179,9 +179,9 @@ function App() {
             <img
               src="/images/SF-Symbols.png"
               alt="SF-Symbols Logo"
-              className="w-9 h-9 md:h-10 md:w-10 lg:w-11 lg:h-11"
+              className="h-10 w-10 lg:w-11 lg:h-11"
             />
-            <h1 className="text-2xl lg:text-3xl font-bold">SF-Symbols</h1>
+            <h1 className="text-3xl font-bold">SF-Symbols</h1>
           </a>
         </header>
 
