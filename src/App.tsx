@@ -40,6 +40,26 @@ const mockData = [
     svgCode: "",
     svgName: [""],
   },
+  {
+    id: 7,
+    svgCode: "",
+    svgName: [""],
+  },
+  {
+    id: 8,
+    svgCode: "",
+    svgName: [""],
+  },
+  {
+    id: 9,
+    svgCode: "",
+    svgName: [""],
+  },
+  {
+    id: 10,
+    svgCode: "",
+    svgName: [""],
+  },
 ];
 
 function App() {
@@ -140,12 +160,12 @@ function App() {
   ];
 
   const { scrollY } = useScroll();
-  const scale = useTransform(scrollY, [400, 600], [0, 1]);
+  const scale = useTransform(scrollY, [400, 410], [0, 1]);
 
   return (
     <div className="antialiased font-medium">
       <img
-        className="w-96 h-96 absolute -z-0 lg:top-16 top-40 lg:right-40 right-0 lg:scale-110 scale-[0.8] origin-bottom"
+        className="w-96 h-96  absolute -z-0 lg:top-16 top-[4.8rem] lg:right-40 right-0 lg:scale-110 scale-[0.60] origin-bottom"
         src="/images/bgImage.webp"
         alt="dashed SF-Symbols logo as the background image"
       />
@@ -244,11 +264,17 @@ function App() {
                   onClick={() => {
                     setCategory(item);
                   }}
-                  className={`border cursor-pointer border-black/20 px-5 py-1.5 rounded-lg w-max duration-100 ${
-                    category !== item && "hover:bg-teal-400/30"
-                  } ${category === item ? "bg-teal-400/60" : "bg-teal-100"}`}
+                  className={`cursor-pointer border border-teal-400 px-5 py-1.5 rounded-lg w-max duration-150 ${
+                    category !== item && "hover:bg-teal-200"
+                  } ${category === item ? "bg-teal-200 " : ""}`}
                 >
-                  <span className="capitalize">{item}</span>
+                  <span
+                    className={`capitalize ${
+                      category === item && "text-teal-700"
+                    }`}
+                  >
+                    {item}
+                  </span>
                 </li>
               ))}
             </ul>
@@ -365,23 +391,31 @@ function App() {
       </section>
 
       <section className="mx-5 md:mx-20 lg:mx-40 mt-12 mb-10">
-        <div className="grid grid-cols-2 sm:grid-cols-3 w-full md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 justify-items-center content-center place-items-center place-content-center gap-y-7">
+        <div
+          className={`grid ${
+            filteredData?.length === 0
+              ? "grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-1 xl:grid-cols-1 2xl:grid-cols-1"
+              : "grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7"
+          } w-full justify-items-center content-center place-items-center place-content-center gap-y-7`}
+        >
           {filteredData?.length === 0 && (
-            <div className="w-full text-zinc-500  flex items-center justify-center mt-5 mb-2 absolute">
+            <div className="w-full m-auto text-zinc-500 flex items-center justify-center mt-5 mb-2 h-48 text-center">
               No SF-Symbols for "{searchQuery}"
             </div>
           )}
 
-          <motion.div
-            key={category}
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-          >
-            <h3 className="capitalize p-1.5 text-lg text-center bg-teal-100 duration-200 rounded-xl w-36 h-36 xl:w-36 xl:h-36 flex items-center justify-center">
-              {category}
-            </h3>
-            <div className="h-10 mt-1.5" />
-          </motion.div>
+          {filteredData?.length !== 0 && (
+            <motion.div
+              key={category}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+            >
+              <h3 className="capitalize p-1.5 text-lg text-center font-semibold duration-200 rounded-xl w-36 h-36 xl:w-36 xl:h-36 flex items-center justify-center">
+                {category}
+              </h3>
+              <div className="h-10 mt-1.5" />
+            </motion.div>
+          )}
 
           {filteredData?.map((file, index) => (
             <div
@@ -428,7 +462,7 @@ function App() {
 
       <hr />
       <footer className="mt-10 mb-20 mx-5 md:mx-40 flex justify-between items-center text-sm">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 w-full">
           <img
             className="w-5 h-5 hover:rotate-90 duration-300"
             src="/images/rounded-logo.svg"
@@ -445,15 +479,28 @@ function App() {
             </span>
           </a>
         </div>
-        <div className="text-xs w-1/3 text-center">
+        <div className="text-xs w-full text-center flex gap-1 flex-wrap justify-end">
           <span className="ml-1">Only Symbols Under</span>{" "}
           <a
-            className="underline underline-offset-2 hover:no-underline"
+            className="underline underline-offset-2 hover:no-underline text-blue-500 flex items-end gap-0.5"
             target="_blank"
             rel="noopener noreferrer"
             href="https://creativecommons.org/licenses/by/4.0/"
           >
-            CC BY 4.0 License
+            CC BY 4.0 License{" "}
+            <svg
+              className="w-3 h-3"
+              width="28"
+              height="28"
+              viewBox="0 0 28 28"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M22.3086 17.9609L22.2969 6.17188C22.2969 5.50391 21.8633 5.03516 21.1602 5.03516H9.37109C8.71484 5.03516 8.26953 5.53906 8.26953 6.10156C8.26953 6.66406 8.77344 7.14453 9.32422 7.14453H13.4023L19.1211 6.95703L16.9414 8.86719L5.32812 20.5039C5.11719 20.7148 5 20.9844 5 21.2422C5 21.8047 5.50391 22.332 6.08984 22.332C6.35938 22.332 6.61719 22.2383 6.82812 22.0156L18.4648 10.3906L20.3984 8.19922L20.1875 13.6719V18.0078C20.1875 18.5586 20.668 19.0742 21.2422 19.0742C21.8047 19.0742 22.3086 18.5938 22.3086 17.9609Z"
+                fill="currentColor"
+              />
+            </svg>
           </a>
         </div>
       </footer>
