@@ -72,7 +72,7 @@ function App() {
   >("All");
   const [searchQuery, setSearchQuery] = useState("");
 
-  const [category, setCategory] = useState("arrows");
+  const [category, setCategory] = useState("accessibility");
 
   const [copied, setCopied] = useState<{ isCopied: boolean; name: string }>({
     isCopied: false,
@@ -105,6 +105,58 @@ function App() {
         setLoading(false);
       });
   }, [category]);
+
+  // -----------------------------------------------
+
+  const [streamData, setStreamData] = useState<Data[]>([]);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const itemsPerPage = 30;
+
+  useEffect(() => {
+    axios({
+      method: "get",
+      url: `https://lktiktfqfsppoevfxkla.supabase.co/storage/v1/object/public/svgs/sf-symbols/${category}.json`,
+      responseType: "json",
+    })
+      .then((res) => {
+        const results: Data[] = res.data.slice(
+          (currentPage - 1) * itemsPerPage,
+          currentPage * itemsPerPage
+        );
+
+        console.log(results);
+
+        setStreamData((prevData) => [...prevData, ...results]);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [currentPage]);
+
+  useEffect(() => {
+    setStreamData([]);
+    setStreamData(mockData);
+    axios({
+      method: "get",
+      url: `https://lktiktfqfsppoevfxkla.supabase.co/storage/v1/object/public/svgs/sf-symbols/${category}.json`,
+      responseType: "json",
+    }).then((res) => {
+      const results: Data[] = res.data.slice(
+        (currentPage - 1) * itemsPerPage,
+        currentPage * itemsPerPage
+      );
+
+      console.log(results);
+      setStreamData([]);
+      setStreamData((prevData) => [...prevData, ...results]);
+    });
+  }, [category]);
+
+  const loadMoreData = () => {
+    setCurrentPage((prevPage) => prevPage + 1);
+  };
+
+  // -----------------------------------------------
 
   function renderSvgCode(svgCode: string | null) {
     if (svgCode === null) {
@@ -156,7 +208,7 @@ function App() {
     "indices",
     "math",
     "text formatting",
-  ];
+  ].sort();
 
   const { scrollY } = useScroll();
   const scale = useTransform(scrollY, [400, 410], [0, 1]);
@@ -427,14 +479,14 @@ function App() {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
             >
-              <h3 className="capitalize p-1.5 text-lg text-center font-semibold duration-200 rounded-xl w-36 h-36 xl:w-36 xl:h-36 flex items-center justify-center">
+              <h3 className="capitalize p-1.5 text-lg text-center bg-teal-100 font-semibold duration-200 rounded-xl w-36 h-36 xl:w-36 xl:h-36 flex items-center justify-center">
                 {category}
               </h3>
               <div className="h-10 mt-1.5" />
             </motion.div>
           )}
 
-          {filteredData?.map((file, index) => (
+          {streamData?.map((file, index) => (
             <div
               className="Container flex flex-col gap-1 lg:gap-2 w-36 xl:w-36 h-auto"
               key={index}
@@ -489,6 +541,22 @@ function App() {
             </div>
           ))}
         </div>
+        {(data?.length as number) - streamData?.length !== 0 && (
+          <div className="flex flex-col lg:flex-row items-center gap-3 mt-7">
+            <p className="font-bold duration-200 text-zinc-500 w-full lg:w-1/4 rounded-xl py-2.5 flex items-center justify-center gap-1">
+              <span className="">
+                {(data?.length as number) - streamData?.length} Symbols
+                Remaining
+              </span>
+            </p>
+            <button
+              onClick={loadMoreData}
+              className="border font-bold duration-200 border-teal-400 hover:bg-teal-200 w-full rounded-xl py-2.5"
+            >
+              Load more symbols
+            </button>
+          </div>
+        )}
       </section>
 
       <hr />
