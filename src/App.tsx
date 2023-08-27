@@ -81,30 +81,29 @@ function App() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    async function getData() {
-      setLoading(true);
-      setData(mockData);
-      setSearchedData(mockData);
-      setFilteredData(mockData);
-      await axios
-        .get(
-          `https://lktiktfqfsppoevfxkla.supabase.co/storage/v1/object/public/svgs/sf-symbols/${category}.json`
-        )
-        .then((res) => {
-          setData(res.data);
-          setSearchedData(res.data);
-          setFilteredData(res.data);
-          setSearchQuery("");
-          setSelectedOption("All");
-          setLoading(false);
-        })
-        .catch((error) => {
-          console.error(error);
-          setLoading(false);
-        });
-    }
+    setLoading(true);
 
-    getData();
+    setData(mockData);
+    setSearchedData(mockData);
+    setFilteredData(mockData);
+
+    axios({
+      method: "GET",
+      url: `https://lktiktfqfsppoevfxkla.supabase.co/storage/v1/object/public/svgs/sf-symbols/${category}.json`,
+      responseType: "json",
+    })
+      .then((res) => {
+        setData(res.data);
+        setSearchedData(res.data);
+        setFilteredData(res.data);
+        setSearchQuery("");
+        setSelectedOption("All");
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error(error);
+        setLoading(false);
+      });
   }, [category]);
 
   function renderSvgCode(svgCode: string | null) {
