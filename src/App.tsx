@@ -22,6 +22,7 @@ function App() {
   const [searchedData, setSearchedData] = useState<Data[]>();
   const [filteredData, setFilteredData] = useState<Data[]>();
   const [streamData, setStreamData] = useState<Data[]>([]);
+  const [filteredStreamData, setFilteredStreamData] = useState<Data[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [initialLoad, setInitialLoad] = useState(false);
   const itemsPerPage = 30;
@@ -62,6 +63,21 @@ function App() {
   }, [currentPage]);
 
   useEffect(() => {
+    setFilteredStreamData([]);
+    if (currentPage > 1 && initialLoad) {
+      if (selectedOption === "Filled") {
+        setFilteredStreamData(
+          streamData.filter((item) => item.svgName[0].includes("fill"))
+        );
+      } else if (selectedOption === "Outline") {
+        setFilteredStreamData(
+          streamData.filter((item) => !item.svgName[0].includes("fill"))
+        );
+      }
+    }
+  }, [selectedOption, currentPage]);
+
+  useEffect(() => {
     setLoading(true);
     setCurrentPage(1);
     setStreamData([]);
@@ -88,9 +104,6 @@ function App() {
   }, [category]);
 
   useEffect(() => {
-    console.log(isInView);
-    console.log(lastItem.current);
-
     if (isInView) {
       setCurrentPage(currentPage + 1);
     }
@@ -197,8 +210,8 @@ function App() {
 
         <section className="flex flex-col gap-3 mx-5 md:mx-20 lg:mx-40 relative">
           <div className="flex items-end gap-1 relative w-fit">
-            <h2 className="uppercase text-xs text-black/70">
-              <span className="bg-teal-300 px-1.5 py-[0.08rem] text-zinc-800 rounded-full">
+            <h2 className="uppercase text-xs font-semibold text-black/70">
+              <span className="bg-teal-200 px-2 py-[0.08rem] text-teal-800 rounded-full">
                 {Categories.length}
               </span>{" "}
               <span>Categories</span>
@@ -281,7 +294,7 @@ function App() {
               onChange={(e) => {
                 setSearchQuery(e.target.value);
                 const query = e.target.value.toLowerCase();
-                const filteredData = data?.filter((item) => {
+                const _searchedData = data?.filter((item) => {
                   if (item.svgName[0].includes(query)) return true;
                 });
 
@@ -289,8 +302,22 @@ function App() {
                   setSearchedData(data);
                   setFilteredData(data);
                 } else {
-                  setSearchedData(filteredData);
-                  setFilteredData(filteredData);
+                  setSearchedData(_searchedData);
+                  if (selectedOption === "Filled") {
+                    setFilteredData(
+                      searchedData?.filter((item) =>
+                        item.svgName[0].includes("fill")
+                      )
+                    );
+                  } else if (selectedOption === "Outline") {
+                    setFilteredData(
+                      searchedData?.filter(
+                        (item) => !item.svgName[0].includes("fill")
+                      )
+                    );
+                  } else {
+                    setFilteredData(_searchedData);
+                  }
                 }
               }}
               className="w-full p-3 py-4 outline-transparent rounded-xl mx-1"
@@ -306,6 +333,7 @@ function App() {
               <button
                 onClick={() => {
                   setSelectedOption("All");
+
                   setFilteredData(searchedData);
                 }}
                 className={`border border-teal-200 w-full lg:px-7 rounded-l-lg py-2 duration-200 ${
@@ -317,10 +345,10 @@ function App() {
               <button
                 onClick={() => {
                   setSelectedOption("Outline");
+
                   const filteredData = searchedData?.filter(
                     (item) => !item.svgName[0].includes("fill")
                   );
-
                   setFilteredData(filteredData);
                 }}
                 className={`border border-teal-200 w-full lg:px-7 py-2 duration-200 ${
@@ -334,6 +362,7 @@ function App() {
               <button
                 onClick={() => {
                   setSelectedOption("Filled");
+
                   const filteredData = searchedData?.filter((item) =>
                     item.svgName[0].includes("fill")
                   );
@@ -400,7 +429,7 @@ function App() {
                     transition={{ delay: 0.1 }}
                     className="text-zinc-600 bg-zinc-200 rounded-full px-2 py-0.5 text-xs"
                   >
-                    {searchQuery.length > 0
+                    {searchQuery.length > 0 || selectedOption !== "All"
                       ? filteredData?.length
                       : data?.length}{" "}
                     Symbols
@@ -411,86 +440,87 @@ function App() {
             </div>
           )}
 
-          {(searchQuery.length === 0 ? streamData : filteredData)?.map(
-            (file, index) => {
-              return (
-                <div
-                  className="Container flex flex-col gap-1 lg:gap-2 w-36 xl:w-36 h-auto"
-                  key={index}
-                >
-                  {!loading ? (
-                    <motion.div
-                      key={category}
-                      initial={{ opacity: 0, scale: 0.85 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                    >
-                      <div className="svgContainer border relative overflow-hidden duration-200 rounded-xl w-36 h-36 xl:w-36 xl:h-36 flex items-center justify-center">
-                        <button
-                          onClick={() => {
-                            copyTextToClipboard(file.svgCode, file.svgName[0]);
-                          }}
-                          className="CopyButton absolute w-full h-1/2 bottom-0 flex items-center justify-center p-1"
-                        >
-                          <p className=" text-sm font-bold text-zinc-500  bg-zinc-200/30 hover:bg-teal-400/40 hover:text-zinc-800 w-full h-full rounded-lg flex items-center justify-center">
-                            {copied.isCopied && copied.name === file.svgName[0]
-                              ? "Copied!"
-                              : "Copy JSX"}
-                          </p>
-                        </button>
-                        <div className="w-fit svgs">
-                          {renderSvgCode(file.svgCode)}
-                        </div>
+          {(searchQuery.length !== 0 || selectedOption !== "All"
+            ? filteredData
+            : streamData
+          )?.map((file, index) => {
+            return (
+              <div
+                className="Container flex flex-col gap-1 lg:gap-2 w-36 xl:w-36 h-auto"
+                key={index}
+              >
+                {!loading ? (
+                  <motion.div
+                    key={category}
+                    initial={{ opacity: 0, scale: 0.85 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                  >
+                    <div className="svgContainer border relative overflow-hidden duration-200 rounded-xl w-36 h-36 xl:w-36 xl:h-36 flex items-center justify-center">
+                      <button
+                        onClick={() => {
+                          copyTextToClipboard(file.svgCode, file.svgName[0]);
+                        }}
+                        className="CopyButton absolute w-full h-1/2 bottom-0 flex items-center justify-center p-1"
+                      >
+                        <p className=" text-sm font-bold text-zinc-500  bg-zinc-200/30 hover:bg-teal-400/40 hover:text-zinc-800 w-full h-full rounded-lg flex items-center justify-center">
+                          {copied.isCopied && copied.name === file.svgName[0]
+                            ? "Copied!"
+                            : "Copy JSX"}
+                        </p>
+                      </button>
+                      <div className="w-fit svgs">
+                        {renderSvgCode(file.svgCode)}
                       </div>
-                      <p className="text-[0.8rem] h-10 text-zinc-500 font-medium truncate text-center mt-1.5">
-                        {file.svgName}
-                      </p>
-                    </motion.div>
-                  ) : (
-                    <>
-                      <div className="svgContainer animate-pulse duration-1000 bg-slate-100 relative overflow-hidden rounded-xl w-36 h-36 xl:w-36 xl:h-36 flex items-center justify-center">
-                        <svg
-                          fill="none"
-                          strokeMiterlimit="10"
-                          strokeWidth="5px"
-                          id="Layer_2"
-                          data-name="Layer 2"
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 117.3 121.51"
-                          className="w-10 h-10"
-                        >
-                          <g id="Layer_1-2" data-name="Layer 1">
-                            <g>
-                              <path
-                                stroke="#e2e5e8"
-                                className="cls-4"
-                                d="m111.75,81.03c5.7,3.29,5.73,8.68.07,11.97l-42.67,24.79c-5.66,3.29-14.97,3.29-20.66,0L5.54,93c-5.7-3.29-5.73-8.68-.07-11.97l42.67-24.79c5.66-3.29,14.96-3.29,20.66,0l42.94,24.79Z"
-                              />
-                              <path
-                                stroke="#ced2d6"
-                                className="cls-2"
-                                d="m111.75,63.01c5.7,3.29,5.73,8.68.07,11.97l-42.67,24.79c-5.66,3.29-14.97,3.29-20.66,0L5.54,74.98c-5.7-3.29-5.73-8.68-.07-11.97l42.67-24.79c5.66-3.29,14.96-3.29,20.66,0l42.94,24.79Z"
-                              />
-                              <path
-                                stroke="#d7dce0"
-                                className="cls-3"
-                                d="m111.75,46.53c5.7,3.29,5.73,8.68.07,11.97l-42.67,24.79c-5.66,3.29-14.97,3.29-20.66,0L5.54,58.5c-5.7-3.29-5.73-8.68-.07-11.97l42.67-24.79c5.66-3.29,14.96-3.29,20.66,0l42.94,24.79Z"
-                              />
-                              <path
-                                stroke="#c3cad1"
-                                className="cls-1"
-                                d="m111.75,28.51c5.7,3.29,5.73,8.68.07,11.97l-42.67,24.79c-5.66,3.29-14.97,3.29-20.66,0L5.54,40.48c-5.7-3.29-5.73-8.68-.07-11.97L48.14,3.72c5.66-3.29,14.96-3.29,20.66,0l42.94,24.79Z"
-                              />
-                            </g>
+                    </div>
+                    <p className="text-[0.8rem] h-10 text-zinc-500 font-medium truncate text-center mt-1.5">
+                      {file.svgName}
+                    </p>
+                  </motion.div>
+                ) : (
+                  <>
+                    <div className="svgContainer animate-pulse duration-1000 bg-slate-100 relative overflow-hidden rounded-xl w-36 h-36 xl:w-36 xl:h-36 flex items-center justify-center">
+                      <svg
+                        fill="none"
+                        strokeMiterlimit="10"
+                        strokeWidth="5px"
+                        id="Layer_2"
+                        data-name="Layer 2"
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 117.3 121.51"
+                        className="w-10 h-10"
+                      >
+                        <g id="Layer_1-2" data-name="Layer 1">
+                          <g>
+                            <path
+                              stroke="#e2e5e8"
+                              className="cls-4"
+                              d="m111.75,81.03c5.7,3.29,5.73,8.68.07,11.97l-42.67,24.79c-5.66,3.29-14.97,3.29-20.66,0L5.54,93c-5.7-3.29-5.73-8.68-.07-11.97l42.67-24.79c5.66-3.29,14.96-3.29,20.66,0l42.94,24.79Z"
+                            />
+                            <path
+                              stroke="#ced2d6"
+                              className="cls-2"
+                              d="m111.75,63.01c5.7,3.29,5.73,8.68.07,11.97l-42.67,24.79c-5.66,3.29-14.97,3.29-20.66,0L5.54,74.98c-5.7-3.29-5.73-8.68-.07-11.97l42.67-24.79c5.66-3.29,14.96-3.29,20.66,0l42.94,24.79Z"
+                            />
+                            <path
+                              stroke="#d7dce0"
+                              className="cls-3"
+                              d="m111.75,46.53c5.7,3.29,5.73,8.68.07,11.97l-42.67,24.79c-5.66,3.29-14.97,3.29-20.66,0L5.54,58.5c-5.7-3.29-5.73-8.68-.07-11.97l42.67-24.79c5.66-3.29,14.96-3.29,20.66,0l42.94,24.79Z"
+                            />
+                            <path
+                              stroke="#c3cad1"
+                              className="cls-1"
+                              d="m111.75,28.51c5.7,3.29,5.73,8.68.07,11.97l-42.67,24.79c-5.66,3.29-14.97,3.29-20.66,0L5.54,40.48c-5.7-3.29-5.73-8.68-.07-11.97L48.14,3.72c5.66-3.29,14.96-3.29,20.66,0l42.94,24.79Z"
+                            />
                           </g>
-                        </svg>
-                      </div>
-                      <div className="svgContainer animate-pulse duration-1000 bg-slate-100 relative overflow-hidden rounded-xl w-36 h-5 xl:w-36 xl:h-5 mt-1 flex items-center justify-center"></div>
-                    </>
-                  )}
-                </div>
-              );
-            }
-          )}
+                        </g>
+                      </svg>
+                    </div>
+                    <div className="svgContainer animate-pulse duration-1000 bg-slate-100 relative overflow-hidden rounded-xl w-36 h-5 xl:w-36 xl:h-5 mt-1 flex items-center justify-center"></div>
+                  </>
+                )}
+              </div>
+            );
+          })}
 
           <div ref={lastItem}>
             <div className="bg-transparent w-36 h-36 xl:w-36 xl:h-36"></div>
