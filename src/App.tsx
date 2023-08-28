@@ -1,7 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import "./App.css";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform, useInView } from "framer-motion";
+import { MockData, Categories } from "./resurces";
 
 type Data = {
   id: number;
@@ -9,154 +10,91 @@ type Data = {
   svgName: string[];
 };
 
-const mockData = [
-  {
-    id: 1,
-    svgCode: "",
-    svgName: [""],
-  },
-  {
-    id: 2,
-    svgCode: "",
-    svgName: [""],
-  },
-  {
-    id: 3,
-    svgCode: "",
-    svgName: [""],
-  },
-  {
-    id: 4,
-    svgCode: "",
-    svgName: [""],
-  },
-  {
-    id: 5,
-    svgCode: "",
-    svgName: [""],
-  },
-  {
-    id: 6,
-    svgCode: "",
-    svgName: [""],
-  },
-  {
-    id: 7,
-    svgCode: "",
-    svgName: [""],
-  },
-  {
-    id: 8,
-    svgCode: "",
-    svgName: [""],
-  },
-  {
-    id: 9,
-    svgCode: "",
-    svgName: [""],
-  },
-  {
-    id: 10,
-    svgCode: "",
-    svgName: [""],
-  },
-];
+type Filters = "All" | "Outline" | "Filled";
+
+type CopySvgKey = {
+  isCopied: boolean;
+  name: string;
+};
 
 function App() {
   const [data, setData] = useState<Data[]>();
   const [searchedData, setSearchedData] = useState<Data[]>();
   const [filteredData, setFilteredData] = useState<Data[]>();
-
-  const [selectedOption, setSelectedOption] = useState<
-    "All" | "Outline" | "Filled"
-  >("All");
+  const [streamData, setStreamData] = useState<Data[]>([]);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [initialLoad, setInitialLoad] = useState(false);
+  const itemsPerPage = 30;
+  const [selectedOption, setSelectedOption] = useState<Filters>("All");
   const [searchQuery, setSearchQuery] = useState("");
-
   const [category, setCategory] = useState("accessibility");
-
-  const [copied, setCopied] = useState<{ isCopied: boolean; name: string }>({
+  const [copied, setCopied] = useState<CopySvgKey>({
     isCopied: false,
     name: "",
   });
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    setLoading(true);
+  const { scrollY } = useScroll();
+  const scale = useTransform(scrollY, [400, 410], [0, 1]);
 
-    setData(mockData);
-    setSearchedData(mockData);
-    setFilteredData(mockData);
-
-    axios({
-      method: "GET",
-      url: `https://lktiktfqfsppoevfxkla.supabase.co/storage/v1/object/public/svgs/sf-symbols/${category}.json`,
-      responseType: "json",
-    })
-      .then((res) => {
-        setData(res.data);
-        setSearchedData(res.data);
-        setFilteredData(res.data);
-        setSearchQuery("");
-        setSelectedOption("All");
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error(error);
-        setLoading(false);
-      });
-  }, [category]);
-
-  // -----------------------------------------------
-
-  const [streamData, setStreamData] = useState<Data[]>([]);
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const itemsPerPage = 30;
+  const lastItem = useRef(null);
+  const isInView = useInView(lastItem, { once: false });
 
   useEffect(() => {
-    axios({
-      method: "get",
-      url: `https://lktiktfqfsppoevfxkla.supabase.co/storage/v1/object/public/svgs/sf-symbols/${category}.json`,
-      responseType: "json",
-    })
-      .then((res) => {
-        const results: Data[] = res.data.slice(
-          (currentPage - 1) * itemsPerPage,
-          currentPage * itemsPerPage
-        );
-
-        console.log(results);
-
-        setStreamData((prevData) => [...prevData, ...results]);
+    if (currentPage > 1 && initialLoad) {
+      axios({
+        method: "get",
+        url: `https://lktiktfqfsppoevfxkla.supabase.co/storage/v1/object/public/svgs/sf-symbols/${category}.json`,
+        responseType: "json",
       })
-      .catch((err) => {
-        console.log(err);
-      });
+        .then((res) => {
+          const results: Data[] = res.data.slice(
+            (currentPage - 1) * itemsPerPage,
+            currentPage * itemsPerPage
+          );
+
+          setStreamData((prevData) => [...prevData, ...results]);
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    }
   }, [currentPage]);
 
   useEffect(() => {
+    setLoading(true);
+    setCurrentPage(1);
     setStreamData([]);
-    setStreamData(mockData);
+    setStreamData(MockData);
     axios({
       method: "get",
       url: `https://lktiktfqfsppoevfxkla.supabase.co/storage/v1/object/public/svgs/sf-symbols/${category}.json`,
-      responseType: "json",
     }).then((res) => {
-      const results: Data[] = res.data.slice(
-        (currentPage - 1) * itemsPerPage,
-        currentPage * itemsPerPage
-      );
+      const results: Data[] = res.data.slice(0, itemsPerPage);
 
-      console.log(results);
+      setInitialLoad(true);
+
       setStreamData([]);
+
       setStreamData((prevData) => [...prevData, ...results]);
+
+      setData(res.data);
+      setSearchedData(res.data);
+      setFilteredData(res.data);
+      setSearchQuery("");
+      setSelectedOption("All");
+      setLoading(false);
     });
   }, [category]);
 
-  const loadMoreData = () => {
-    setCurrentPage((prevPage) => prevPage + 1);
-  };
+  useEffect(() => {
+    console.log(isInView);
+    console.log(lastItem.current);
 
-  // -----------------------------------------------
+    if (isInView) {
+      setCurrentPage(currentPage + 1);
+    }
+  }, [isInView]);
 
   function renderSvgCode(svgCode: string | null) {
     if (svgCode === null) {
@@ -180,39 +118,6 @@ function App() {
     }
   }
 
-  const Categories = [
-    "arrows",
-    "communication",
-    "privacy & security",
-    "weather",
-    "maps",
-    "time",
-    "health",
-    "shapes",
-    "objects & tools",
-    "human",
-    "devices",
-    "camera & photos",
-    "gaming",
-    "connectivity",
-    "transportation",
-    "automation",
-    "accessibility",
-    "home",
-    "fitness",
-    "nature",
-    "editing",
-    "media",
-    "keyboard",
-    "commerce",
-    "indices",
-    "math",
-    "text formatting",
-  ].sort();
-
-  const { scrollY } = useScroll();
-  const scale = useTransform(scrollY, [400, 410], [0, 1]);
-
   return (
     <div className="antialiased font-medium">
       <img
@@ -225,14 +130,16 @@ function App() {
         <header className="flex items-center relative justify-between mx-5 md:mx-20 lg:mx-40 my-10">
           <a
             href="https://sf-symbols.vercel.app"
-            className="flex items-center gap-3 relative"
+            className="flex items-center gap-3 relative active:scale-95 duration-200"
           >
             <div className="absolute bg-transparent rounded-xl w-full h-full" />
+
             <img
               src="/images/SF-Symbols.png"
               alt="SF-Symbols Logo"
               className="h-10 w-10 lg:w-11 lg:h-11"
             />
+
             <h1 className="text-3xl font-bold">SF-Symbols</h1>
           </a>
         </header>
@@ -257,7 +164,7 @@ function App() {
               href="https://github.com/sina-sparkn/SF-Symbols-Icons"
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:bg-teal-200 duration-200 flex w-fit items-center gap-2 border border-zinc-300 rounded-lg px-5 py-2 text-zinc-900 "
+              className="hover:bg-teal-200 duration-200 flex w-fit items-center gap-2 border border-zinc-500 bg-teal-300 rounded-lg px-5 py-2 text-zinc-900 "
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -273,7 +180,7 @@ function App() {
               target="_blank"
               rel="noopener noreferrer"
               href="https://www.figma.com/community/file/886999666531731323"
-              className="hover:bg-teal-200 duration-200 flex w-fit items-center gap-2 border border-zinc-300 rounded-lg px-5 py-2 text-zinc-900 "
+              className="hover:bg-teal-200 duration-200 flex w-fit items-center gap-2 border border-zinc-500 rounded-lg px-5 py-2 text-zinc-900 "
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -289,20 +196,24 @@ function App() {
         </div>
 
         <section className="flex flex-col gap-3 mx-5 md:mx-20 lg:mx-40 relative">
-          <div className="flex items-start gap-1">
-            <h2 className="uppercase text-xs text-black/70">Categories</h2>
+          <div className="flex items-end gap-1 relative w-fit">
+            <h2 className="uppercase text-xs text-black/70">
+              <span className="bg-teal-300 px-1.5 py-[0.08rem] text-zinc-800 rounded-full">
+                {Categories.length}
+              </span>{" "}
+              <span>Categories</span>
+            </h2>
             <svg
               width="28"
               height="28"
               viewBox="0 0 28 28"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
-              className="w-3.5 h-3.5"
+              className="w-3.5 h-3.5 mb-[0.08rem]"
             >
               <path
                 d="M22.3086 9.41797C22.3086 8.77344 21.8047 8.30469 21.2422 8.30469C20.668 8.30469 20.1875 8.80859 20.1875 9.37109V13.6953L20.3984 19.168L18.4648 16.9883L6.82812 5.35156C6.61719 5.14063 6.35938 5.03516 6.08984 5.03516C5.50391 5.03516 5 5.57422 5 6.13672C5 6.38281 5.11719 6.66406 5.32812 6.875L16.9414 18.5L19.1211 20.4219L13.4023 20.2344H9.32422C8.77344 20.2344 8.26953 20.7148 8.26953 21.2773C8.26953 21.8398 8.71484 22.332 9.37109 22.332H21.1602C21.8633 22.332 22.2969 21.875 22.2969 21.207L22.3086 9.41797Z"
                 fill="#00000097"
-                fillOpacity="0.85"
               />
             </svg>
           </div>
@@ -474,16 +385,27 @@ function App() {
           )}
 
           {filteredData?.length !== 0 && (
-            <motion.div
-              key={category}
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-            >
-              <h3 className="capitalize p-1.5 text-lg text-center bg-teal-100 font-semibold duration-200 rounded-xl w-36 h-36 xl:w-36 xl:h-36 flex items-center justify-center">
-                {category}
+            <div key={category}>
+              <h3 className="capitalize p-1.5 text-inherit text-center text-zinc-700 font-semibold duration-200 rounded-xl w-36 h-36 xl:w-36 xl:h-36 flex flex-col items-center gap-1 justify-center">
+                <motion.span
+                  initial={{ opacity: 0, scale: 0.5 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                >
+                  {category}
+                </motion.span>
+                {!loading && (
+                  <motion.span
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.1 }}
+                    className="text-zinc-600 bg-zinc-200 rounded-full px-2 py-0.5 text-xs"
+                  >
+                    {data?.length} Symbols
+                  </motion.span>
+                )}
               </h3>
               <div className="h-10 mt-1.5" />
-            </motion.div>
+            </div>
           )}
 
           {streamData?.map((file, index) => (
@@ -494,7 +416,7 @@ function App() {
               {!loading ? (
                 <motion.div
                   key={category}
-                  initial={{ opacity: 0, scale: 0.9 }}
+                  initial={{ opacity: 0, scale: 0.85 }}
                   animate={{ opacity: 1, scale: 1 }}
                 >
                   <div className="svgContainer border relative overflow-hidden duration-200 rounded-xl w-36 h-36 xl:w-36 xl:h-36 flex items-center justify-center">
@@ -514,7 +436,7 @@ function App() {
                       {renderSvgCode(file.svgCode)}
                     </div>
                   </div>
-                  <p className="text-sm h-10 text-zinc-400 font-medium truncate text-center mt-1.5">
+                  <p className="text-[0.8rem] h-10 text-zinc-500 font-medium truncate text-center mt-1.5">
                     {file.svgName}
                   </p>
                 </motion.div>
@@ -522,17 +444,39 @@ function App() {
                 <>
                   <div className="svgContainer animate-pulse duration-1000 bg-slate-100 relative overflow-hidden rounded-xl w-36 h-36 xl:w-36 xl:h-36 flex items-center justify-center">
                     <svg
-                      className="w-9 h-9"
-                      width="28"
-                      height="28"
-                      viewBox="0 0 28 28"
                       fill="none"
+                      strokeMiterlimit="10"
+                      strokeWidth="5px"
+                      id="Layer_2"
+                      data-name="Layer 2"
                       xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 117.3 121.51"
+                      className="w-10 h-10"
                     >
-                      <path
-                        d="M3.67578 21.1607L11.6914 25.7778C13.0742 26.5747 14.4219 26.5864 15.8281 25.7778L23.8438 21.1607C24.9336 20.5278 25.5195 19.9067 25.5195 18.2075V9.09036C25.5195 7.43802 24.9219 6.84036 23.9258 6.26614L15.8867 1.62552C14.4336 0.781769 13.0508 0.805207 11.6328 1.62552L3.60547 6.26614C2.59766 6.84036 2 7.43802 2 9.09036V18.2075C2 19.9067 2.59766 20.5278 3.67578 21.1607ZM4.73047 19.4849C4.09766 19.1216 3.88672 18.8052 3.88672 18.1607V9.13724C3.88672 8.5513 4.08594 8.25833 4.64844 7.94192L12.418 3.41849C13.3555 2.89114 14.1406 2.8677 15.1016 3.41849L22.8711 7.94192C23.4336 8.25833 23.6328 8.5513 23.6328 9.13724V18.1607C23.6328 18.8052 23.4336 19.1216 22.7891 19.4849L15.043 23.9732C14.1172 24.5005 13.3789 24.4888 12.4766 23.9732L4.73047 19.4849Z"
-                        fill="#acb5c280"
-                      />
+                      <g id="Layer_1-2" data-name="Layer 1">
+                        <g>
+                          <path
+                            stroke="#e2e5e8"
+                            className="cls-4"
+                            d="m111.75,81.03c5.7,3.29,5.73,8.68.07,11.97l-42.67,24.79c-5.66,3.29-14.97,3.29-20.66,0L5.54,93c-5.7-3.29-5.73-8.68-.07-11.97l42.67-24.79c5.66-3.29,14.96-3.29,20.66,0l42.94,24.79Z"
+                          />
+                          <path
+                            stroke="#ced2d6"
+                            className="cls-2"
+                            d="m111.75,63.01c5.7,3.29,5.73,8.68.07,11.97l-42.67,24.79c-5.66,3.29-14.97,3.29-20.66,0L5.54,74.98c-5.7-3.29-5.73-8.68-.07-11.97l42.67-24.79c5.66-3.29,14.96-3.29,20.66,0l42.94,24.79Z"
+                          />
+                          <path
+                            stroke="#d7dce0"
+                            className="cls-3"
+                            d="m111.75,46.53c5.7,3.29,5.73,8.68.07,11.97l-42.67,24.79c-5.66,3.29-14.97,3.29-20.66,0L5.54,58.5c-5.7-3.29-5.73-8.68-.07-11.97l42.67-24.79c5.66-3.29,14.96-3.29,20.66,0l42.94,24.79Z"
+                          />
+                          <path
+                            stroke="#c3cad1"
+                            className="cls-1"
+                            d="m111.75,28.51c5.7,3.29,5.73,8.68.07,11.97l-42.67,24.79c-5.66,3.29-14.97,3.29-20.66,0L5.54,40.48c-5.7-3.29-5.73-8.68-.07-11.97L48.14,3.72c5.66-3.29,14.96-3.29,20.66,0l42.94,24.79Z"
+                          />
+                        </g>
+                      </g>
                     </svg>
                   </div>
                   <div className="svgContainer animate-pulse duration-1000 bg-slate-100 relative overflow-hidden rounded-xl w-36 h-5 xl:w-36 xl:h-5 mt-1 flex items-center justify-center"></div>
@@ -540,23 +484,11 @@ function App() {
               )}
             </div>
           ))}
-        </div>
-        {(data?.length as number) - streamData?.length !== 0 && (
-          <div className="flex flex-col lg:flex-row items-center gap-3 mt-7">
-            <p className="font-bold duration-200 text-zinc-500 w-full lg:w-1/4 rounded-xl py-2.5 flex items-center justify-center gap-1">
-              <span className="">
-                {(data?.length as number) - streamData?.length} Symbols
-                Remaining
-              </span>
-            </p>
-            <button
-              onClick={loadMoreData}
-              className="border font-bold duration-200 border-teal-400 hover:bg-teal-200 w-full rounded-xl py-2.5"
-            >
-              Load more symbols
-            </button>
+          <div ref={lastItem}>
+            <div className="bg-transparent w-36 h-36 xl:w-36 xl:h-36"></div>
+            <div className="h-10 mt-1.5" />
           </div>
-        )}
+        </div>
       </section>
 
       <hr />
@@ -609,20 +541,28 @@ function App() {
           window.scrollTo(0, 0);
         }}
         style={{ scale }}
-        className="fixed duration-300 w-11 h-11 lg:w-12 lg:h-12 flex items-center justify-center outline outline-1 outline-zinc-400 bg-teal-200 cursor-pointer rounded-full bottom-3 right-3"
+        className="backToTop overflow-hidden fixed duration-300  w-11 h-11 lg:w-12 lg:h-12 flex flex-col items-center justify-center outline outline-1 outline-zinc-400 bg-teal-200 cursor-pointer rounded-full bottom-3 right-3"
       >
         <svg
-          width="28"
-          height="28"
           viewBox="0 0 28 28"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
-          className="w-5 h-5 lg:w-6 lg:h-6"
+          className="svg1 w-5 h-5 lg:w-6 lg:h-6 duration-300"
         >
           <path
             d="M13.8828 25.1367C14.4922 25.1367 14.9258 24.7148 14.9258 24.1055V8.67188L14.8086 5.17969L14.1406 5.41406L18.3477 10.0195L21.0195 12.6445C21.207 12.832 21.4766 12.9258 21.7578 12.9258C22.3438 12.9258 22.7656 12.4805 22.7656 11.9062C22.7656 11.625 22.6719 11.3789 22.4492 11.1445L14.668 3.35156C14.4453 3.11719 14.1758 3 13.8828 3C13.5898 3 13.3203 3.11719 13.0977 3.35156L5.32812 11.1445C5.10547 11.3789 5 11.625 5 11.9062C5 12.4805 5.42188 12.9258 6.00781 12.9258C6.28906 12.9258 6.57031 12.832 6.74609 12.6445L9.41797 10.0195L13.6133 5.41406L12.957 5.17969L12.8398 8.67188V24.1055C12.8398 24.7148 13.2734 25.1367 13.8828 25.1367Z"
             fill="black"
-            fillOpacity="0.8"
+          />
+        </svg>
+        <svg
+          viewBox="0 0 28 28"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          className="svg2 w-5 h-5 lg:w-6 lg:h-6 absolute translate-y-9 duration-300"
+        >
+          <path
+            d="M13.8828 25.1367C14.4922 25.1367 14.9258 24.7148 14.9258 24.1055V8.67188L14.8086 5.17969L14.1406 5.41406L18.3477 10.0195L21.0195 12.6445C21.207 12.832 21.4766 12.9258 21.7578 12.9258C22.3438 12.9258 22.7656 12.4805 22.7656 11.9062C22.7656 11.625 22.6719 11.3789 22.4492 11.1445L14.668 3.35156C14.4453 3.11719 14.1758 3 13.8828 3C13.5898 3 13.3203 3.11719 13.0977 3.35156L5.32812 11.1445C5.10547 11.3789 5 11.625 5 11.9062C5 12.4805 5.42188 12.9258 6.00781 12.9258C6.28906 12.9258 6.57031 12.832 6.74609 12.6445L9.41797 10.0195L13.6133 5.41406L12.957 5.17969L12.8398 8.67188V24.1055C12.8398 24.7148 13.2734 25.1367 13.8828 25.1367Z"
+            fill="black"
           />
         </svg>
       </motion.button>

@@ -71,3 +71,11 @@ input[type="search"]::-webkit-search-results-button,
 input[type="search"]::-webkit-search-results-decoration {
   display: none;
 }
+
+.backToTop:hover .svg2 {
+  transform: translateY(0rem);
+}
+
+.backToTop:hover .svg1 {
+  transform: translateY(-2.5rem);
+}
