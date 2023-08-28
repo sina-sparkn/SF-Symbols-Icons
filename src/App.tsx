@@ -400,7 +400,10 @@ function App() {
                     transition={{ delay: 0.1 }}
                     className="text-zinc-600 bg-zinc-200 rounded-full px-2 py-0.5 text-xs"
                   >
-                    {data?.length} Symbols
+                    {searchQuery.length > 0
+                      ? filteredData?.length
+                      : data?.length}{" "}
+                    Symbols
                   </motion.span>
                 )}
               </h3>
@@ -408,82 +411,87 @@ function App() {
             </div>
           )}
 
-          {streamData?.map((file, index) => (
-            <div
-              className="Container flex flex-col gap-1 lg:gap-2 w-36 xl:w-36 h-auto"
-              key={index}
-            >
-              {!loading ? (
-                <motion.div
-                  key={category}
-                  initial={{ opacity: 0, scale: 0.85 }}
-                  animate={{ opacity: 1, scale: 1 }}
+          {(searchQuery.length === 0 ? streamData : filteredData)?.map(
+            (file, index) => {
+              return (
+                <div
+                  className="Container flex flex-col gap-1 lg:gap-2 w-36 xl:w-36 h-auto"
+                  key={index}
                 >
-                  <div className="svgContainer border relative overflow-hidden duration-200 rounded-xl w-36 h-36 xl:w-36 xl:h-36 flex items-center justify-center">
-                    <button
-                      onClick={() => {
-                        copyTextToClipboard(file.svgCode, file.svgName[0]);
-                      }}
-                      className="CopyButton absolute w-full h-1/2 bottom-0 flex items-center justify-center p-1"
+                  {!loading ? (
+                    <motion.div
+                      key={category}
+                      initial={{ opacity: 0, scale: 0.85 }}
+                      animate={{ opacity: 1, scale: 1 }}
                     >
-                      <p className=" text-sm font-bold text-zinc-500  bg-zinc-200/30 hover:bg-teal-400/40 hover:text-zinc-800 w-full h-full rounded-lg flex items-center justify-center">
-                        {copied.isCopied && copied.name === file.svgName[0]
-                          ? "Copied!"
-                          : "Copy JSX"}
+                      <div className="svgContainer border relative overflow-hidden duration-200 rounded-xl w-36 h-36 xl:w-36 xl:h-36 flex items-center justify-center">
+                        <button
+                          onClick={() => {
+                            copyTextToClipboard(file.svgCode, file.svgName[0]);
+                          }}
+                          className="CopyButton absolute w-full h-1/2 bottom-0 flex items-center justify-center p-1"
+                        >
+                          <p className=" text-sm font-bold text-zinc-500  bg-zinc-200/30 hover:bg-teal-400/40 hover:text-zinc-800 w-full h-full rounded-lg flex items-center justify-center">
+                            {copied.isCopied && copied.name === file.svgName[0]
+                              ? "Copied!"
+                              : "Copy JSX"}
+                          </p>
+                        </button>
+                        <div className="w-fit svgs">
+                          {renderSvgCode(file.svgCode)}
+                        </div>
+                      </div>
+                      <p className="text-[0.8rem] h-10 text-zinc-500 font-medium truncate text-center mt-1.5">
+                        {file.svgName}
                       </p>
-                    </button>
-                    <div className="w-fit svgs">
-                      {renderSvgCode(file.svgCode)}
-                    </div>
-                  </div>
-                  <p className="text-[0.8rem] h-10 text-zinc-500 font-medium truncate text-center mt-1.5">
-                    {file.svgName}
-                  </p>
-                </motion.div>
-              ) : (
-                <>
-                  <div className="svgContainer animate-pulse duration-1000 bg-slate-100 relative overflow-hidden rounded-xl w-36 h-36 xl:w-36 xl:h-36 flex items-center justify-center">
-                    <svg
-                      fill="none"
-                      strokeMiterlimit="10"
-                      strokeWidth="5px"
-                      id="Layer_2"
-                      data-name="Layer 2"
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 117.3 121.51"
-                      className="w-10 h-10"
-                    >
-                      <g id="Layer_1-2" data-name="Layer 1">
-                        <g>
-                          <path
-                            stroke="#e2e5e8"
-                            className="cls-4"
-                            d="m111.75,81.03c5.7,3.29,5.73,8.68.07,11.97l-42.67,24.79c-5.66,3.29-14.97,3.29-20.66,0L5.54,93c-5.7-3.29-5.73-8.68-.07-11.97l42.67-24.79c5.66-3.29,14.96-3.29,20.66,0l42.94,24.79Z"
-                          />
-                          <path
-                            stroke="#ced2d6"
-                            className="cls-2"
-                            d="m111.75,63.01c5.7,3.29,5.73,8.68.07,11.97l-42.67,24.79c-5.66,3.29-14.97,3.29-20.66,0L5.54,74.98c-5.7-3.29-5.73-8.68-.07-11.97l42.67-24.79c5.66-3.29,14.96-3.29,20.66,0l42.94,24.79Z"
-                          />
-                          <path
-                            stroke="#d7dce0"
-                            className="cls-3"
-                            d="m111.75,46.53c5.7,3.29,5.73,8.68.07,11.97l-42.67,24.79c-5.66,3.29-14.97,3.29-20.66,0L5.54,58.5c-5.7-3.29-5.73-8.68-.07-11.97l42.67-24.79c5.66-3.29,14.96-3.29,20.66,0l42.94,24.79Z"
-                          />
-                          <path
-                            stroke="#c3cad1"
-                            className="cls-1"
-                            d="m111.75,28.51c5.7,3.29,5.73,8.68.07,11.97l-42.67,24.79c-5.66,3.29-14.97,3.29-20.66,0L5.54,40.48c-5.7-3.29-5.73-8.68-.07-11.97L48.14,3.72c5.66-3.29,14.96-3.29,20.66,0l42.94,24.79Z"
-                          />
-                        </g>
-                      </g>
-                    </svg>
-                  </div>
-                  <div className="svgContainer animate-pulse duration-1000 bg-slate-100 relative overflow-hidden rounded-xl w-36 h-5 xl:w-36 xl:h-5 mt-1 flex items-center justify-center"></div>
-                </>
-              )}
-            </div>
-          ))}
+                    </motion.div>
+                  ) : (
+                    <>
+                      <div className="svgContainer animate-pulse duration-1000 bg-slate-100 relative overflow-hidden rounded-xl w-36 h-36 xl:w-36 xl:h-36 flex items-center justify-center">
+                        <svg
+                          fill="none"
+                          strokeMiterlimit="10"
+                          strokeWidth="5px"
+                          id="Layer_2"
+                          data-name="Layer 2"
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 117.3 121.51"
+                          className="w-10 h-10"
+                        >
+                          <g id="Layer_1-2" data-name="Layer 1">
+                            <g>
+                              <path
+                                stroke="#e2e5e8"
+                                className="cls-4"
+                                d="m111.75,81.03c5.7,3.29,5.73,8.68.07,11.97l-42.67,24.79c-5.66,3.29-14.97,3.29-20.66,0L5.54,93c-5.7-3.29-5.73-8.68-.07-11.97l42.67-24.79c5.66-3.29,14.96-3.29,20.66,0l42.94,24.79Z"
+                              />
+                              <path
+                                stroke="#ced2d6"
+                                className="cls-2"
+                                d="m111.75,63.01c5.7,3.29,5.73,8.68.07,11.97l-42.67,24.79c-5.66,3.29-14.97,3.29-20.66,0L5.54,74.98c-5.7-3.29-5.73-8.68-.07-11.97l42.67-24.79c5.66-3.29,14.96-3.29,20.66,0l42.94,24.79Z"
+                              />
+                              <path
+                                stroke="#d7dce0"
+                                className="cls-3"
+                                d="m111.75,46.53c5.7,3.29,5.73,8.68.07,11.97l-42.67,24.79c-5.66,3.29-14.97,3.29-20.66,0L5.54,58.5c-5.7-3.29-5.73-8.68-.07-11.97l42.67-24.79c5.66-3.29,14.96-3.29,20.66,0l42.94,24.79Z"
+                              />
+                              <path
+                                stroke="#c3cad1"
+                                className="cls-1"
+                                d="m111.75,28.51c5.7,3.29,5.73,8.68.07,11.97l-42.67,24.79c-5.66,3.29-14.97,3.29-20.66,0L5.54,40.48c-5.7-3.29-5.73-8.68-.07-11.97L48.14,3.72c5.66-3.29,14.96-3.29,20.66,0l42.94,24.79Z"
+                              />
+                            </g>
+                          </g>
+                        </svg>
+                      </div>
+                      <div className="svgContainer animate-pulse duration-1000 bg-slate-100 relative overflow-hidden rounded-xl w-36 h-5 xl:w-36 xl:h-5 mt-1 flex items-center justify-center"></div>
+                    </>
+                  )}
+                </div>
+              );
+            }
+          )}
+
           <div ref={lastItem}>
             <div className="bg-transparent w-36 h-36 xl:w-36 xl:h-36"></div>
             <div className="h-10 mt-1.5" />
