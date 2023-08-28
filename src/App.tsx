@@ -22,7 +22,6 @@ function App() {
   const [searchedData, setSearchedData] = useState<Data[]>();
   const [filteredData, setFilteredData] = useState<Data[]>();
   const [streamData, setStreamData] = useState<Data[]>([]);
-  const [filteredStreamData, setFilteredStreamData] = useState<Data[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [initialLoad, setInitialLoad] = useState(false);
   const itemsPerPage = 30;
@@ -61,21 +60,6 @@ function App() {
         });
     }
   }, [currentPage]);
-
-  useEffect(() => {
-    setFilteredStreamData([]);
-    if (currentPage > 1 && initialLoad) {
-      if (selectedOption === "Filled") {
-        setFilteredStreamData(
-          streamData.filter((item) => item.svgName[0].includes("fill"))
-        );
-      } else if (selectedOption === "Outline") {
-        setFilteredStreamData(
-          streamData.filter((item) => !item.svgName[0].includes("fill"))
-        );
-      }
-    }
-  }, [selectedOption, currentPage]);
 
   useEffect(() => {
     setLoading(true);
