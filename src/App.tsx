@@ -116,7 +116,7 @@ function App() {
   }
 
   return (
-    <div className="antialiased font-medium">
+    <main className="antialiased font-medium">
       <img
         className="bgImage w-96 h-96 hidden lg:block absolute -z-0 lg:top-16 top-[4.8rem] lg:right-40 right-0 lg:scale-110 scale-[0.60] origin-bottom"
         src="/images/bgImage.webp"
@@ -399,7 +399,7 @@ function App() {
 
           {filteredData?.length !== 0 && (
             <div key={category}>
-              <h3 className="capitalize p-1.5 text-inherit text-center text-zinc-700 font-semibold duration-200 rounded-xl w-36 h-36 xl:w-36 xl:h-36 flex flex-col items-center gap-1 justify-center">
+              <h3 className="capitalize p-1.5 relative text-inherit text-center text-zinc-700 font-semibold duration-200 rounded-xl w-36 h-36 xl:w-36 xl:h-36 flex flex-col items-center gap-1 justify-center">
                 <motion.span
                   initial={{ opacity: 0, scale: 0.5 }}
                   animate={{ opacity: 1, scale: 1 }}
@@ -417,6 +417,17 @@ function App() {
                       ? filteredData?.length
                       : data?.length}{" "}
                     Symbols
+                  </motion.span>
+                )}
+                {selectedOption !== "All" && (
+                  <motion.span
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.1 }}
+                    key={selectedOption}
+                    className="text-teal-700 mt-1 bg-teal-200 rounded-full px-2 py-0.5 text-xs"
+                  >
+                    {selectedOption}
                   </motion.span>
                 )}
               </h3>
@@ -588,7 +599,7 @@ function App() {
           />
         </svg>
       </motion.button>
-    </div>
+    </main>
   );
 }
 
